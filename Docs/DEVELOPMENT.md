@@ -1,5 +1,17 @@
 # Development record
 
+## 2026-10-27 — Selection and camera prototype
+
+User approved click selection, two hand slots, hover/selection outlines, orbit/pan/zoom, focus/reset and alignment views, with clear controls in the UI.
+
+`CardStackerControls` attaches to the existing scene camera when Play starts, so the currently open scene does not need to be recreated. Left-click selects and empty-space click or Escape deselects; neither alters held physics state. Hand buttons change selection only. Selection does not recenter the camera. Right-drag orbits the selected card (or table centre), middle-drag pans, wheel zooms, F focuses and Home resets. Alignment buttons provide front/side/overhead views. The 1920x1080 HUD scales to the game window and blocks scene input beneath its panels.
+
+Both initial cards remain held. No movement, release, snapping or artificial balancing was added. Camera clipping prevention currently uses a tabletop height floor and a minimum orbit distance; it is not a general obstacle collision system.
+
+Verification uses an isolated copy of the project to avoid closing the user's open Unity editor. A development-only player smoke test exercises ray picking, selection without recentering, deselection, focus, camera limits, presets/reset and unchanged held-card transforms, then captures the real player UI.
+
+Validation passed in a Unity 6000.3.8f1 Windows development build. The real player completed all smoke assertions and produced a 1920x1080 screenshot with the gold selected-card outline, hand buttons and readable control guide. Headless player capture was black, so visual inspection used a graphics-enabled player run. This validates the current selection/camera behavior, not future card placement or balancing.
+
 ## 2026-10-27 — Project setup
 
 The user proposed a 3D house-of-cards game, centred on minute position/angle control and a maximum of two held cards. One hand holds the first card while the other positions the second; releasing allows physical balance or collapse.

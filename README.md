@@ -4,7 +4,7 @@ A Unity experiment about building structures from playing cards using two virtua
 
 ## Status
 
-Project setup and physics test scene. Interactive card controls are the next prototype; this is not a finished game.
+Selection and camera prototype. Two cards remain held while you select them and inspect the table. Card positioning, rotation and release are the next milestone; this is not a finished game.
 
 ## Open the project
 
@@ -14,7 +14,24 @@ Project setup and physics test scene. Interactive card controls are the next pro
 4. Open `Assets/_Project/Scenes/CardStacker.unity`.
 5. To recreate the starting scene, choose **Hatdon > Card Stacker > Create Setup Scene** (this replaces it after confirmation).
 
-The setup scene contains a table, camera, light and two held test cards. Pressing Play does not yet provide placement controls. No Asset Store assets or online services are required.
+The setup scene contains a table, camera, light and two held test cards. Press **Play** to use selection, the camera and the on-screen control guide. No Asset Store assets or online services are required.
+
+## Current controls
+
+| Input | Action |
+| --- | --- |
+| Hover over a card | Subtle blue outline |
+| Left-click a card | Select it; gold outline |
+| Left-click empty table / Esc | Deselect; both cards remain held |
+| Left / Right hand buttons | Switch selected held card |
+| Right-drag | Orbit selected card, or table centre |
+| Middle-drag | Pan |
+| Mouse wheel | Zoom within near/far limits |
+| F | Focus selected card, or table centre |
+| Home | Restore initial camera |
+| Front / Side / Overhead buttons | Alignment views |
+
+Selecting a card does not move the camera. The camera stays above the tabletop. Both hand slots currently start occupied; picking up, moving and releasing cards are not implemented yet.
 
 ## Intended interaction
 
