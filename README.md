@@ -11,8 +11,8 @@ Project setup and physics test scene. Interactive card controls are the next pro
 1. Install **Unity 6000.3.8f1** through Unity Hub and activate an eligible licence.
 2. Clone this repository and add its root folder in Unity Hub.
 3. Open the project. Unity generates its local Library and editor settings.
-4. Choose **Hatdon > Card Stacker > Create Setup Scene**.
-5. Open `Assets/_Project/Scenes/CardStacker.unity` if it is not already open.
+4. Open `Assets/_Project/Scenes/CardStacker.unity`.
+5. To recreate the starting scene, choose **Hatdon > Card Stacker > Create Setup Scene** (this replaces it after confirmation).
 
 The setup scene contains a table, camera, light and two held test cards. Pressing Play does not yet provide placement controls. No Asset Store assets or online services are required.
 

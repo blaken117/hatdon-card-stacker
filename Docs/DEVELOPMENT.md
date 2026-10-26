@@ -8,7 +8,9 @@ Unity was selected for the physics prototype. Git/GitHub will preserve source an
 
 Repository: https://github.com/blaken117/hatdon-card-stacker (public).
 
-Initial editor validation is blocked: the installed editor reports no active Unity Editor licence. The user needs to activate their eligible licence in Unity Hub. The setup scene generator has been written but has not yet been compiled or executed in Unity. No scene or playable build is claimed complete.
+The user completed Unity sign-in/licence setup. Unity 6000.3.8f1 then compiled the editor code and generated `Assets/_Project/Scenes/CardStacker.unity` successfully. The setup validator confirmed exactly two held rigid-body cards with colliders and positive masses, plus the table and main camera. The scene, contact material, visual materials and generated project settings are preserved in Git. This is a validated starting scene, not a playable card-placement prototype.
+
+A second graphics-enabled editor run rendered the actual scene at 1920x1080 for visual inspection and exited successfully. This confirms the camera, table and both card materials render. The initial shader uses the built-in render pipeline; no external art assets are required.
 
 ### First gameplay milestone
 

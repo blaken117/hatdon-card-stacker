@@ -102,5 +102,38 @@ namespace Hatdon.CardStacker.Editor
             if (Camera.main == null || GameObject.Find("Table") == null || !File.Exists(ScenePath))
                 throw new Exception("Setup scene is incomplete.");
         }
+
+        public static void CapturePreview()
+        {
+            EditorSceneManager.OpenScene(ScenePath);
+            Validate();
+            var args = Environment.GetCommandLineArgs();
+            int option = Array.IndexOf(args, "-previewOutput");
+            if (option < 0 || option + 1 >= args.Length)
+                throw new ArgumentException("Supply -previewOutput with an output PNG path.");
+            string output = Path.GetFullPath(args[option + 1]);
+            Directory.CreateDirectory(Path.GetDirectoryName(output));
+            var target = new RenderTexture(1920, 1080, 24);
+            var previous = RenderTexture.active;
+            var image = new Texture2D(1920, 1080, TextureFormat.RGB24, false);
+            try
+            {
+                Camera.main.targetTexture = target;
+                Camera.main.Render();
+                RenderTexture.active = target;
+                image.ReadPixels(new Rect(0, 0, 1920, 1080), 0, 0);
+                image.Apply();
+                File.WriteAllBytes(output, image.EncodeToPNG());
+                Debug.Log("HATDON_PREVIEW_OK: " + output);
+            }
+            finally
+            {
+                Camera.main.targetTexture = null;
+                RenderTexture.active = previous;
+                target.Release();
+                UnityEngine.Object.DestroyImmediate(target);
+                UnityEngine.Object.DestroyImmediate(image);
+            }
+        }
     }
 }
