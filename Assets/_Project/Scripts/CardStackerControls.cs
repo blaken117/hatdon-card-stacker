@@ -8,6 +8,7 @@ namespace Hatdon.CardStacker
         public Rigidbody Selected { get; private set; }
         public Rigidbody[] Hands { get; private set; }
         public Vector3 Pivot { get; private set; }
+        public CardManipulator Manipulator { get; private set; }
         private Camera view;
         private Rigidbody hovered;
         private LineRenderer[] outlines;
@@ -17,7 +18,8 @@ namespace Hatdon.CardStacker
         private Vector2 lastPointer;
         private Material outlineMaterial;
         private GUIStyle heading, text, muted, button;
-        private static readonly Rect Guide = new Rect(24, 24, 352, 310);
+        private static readonly Rect Guide = new Rect(24, 24, 352, 412);
+        private static readonly Rect PosePanel = new Rect(24, 460, 380, 204);
         private static readonly Rect Views = new Rect(1476, 24, 420, 90);
         private static readonly Rect HandPanel = new Rect(590, 954, 740, 102);
 #if HATDON_CAPTURE
@@ -56,12 +58,14 @@ namespace Hatdon.CardStacker
                 edge.enabled = false;
                 outlines[i] = edge;
             }
+            Manipulator = gameObject.AddComponent<CardManipulator>();
+            Manipulator.Initialise(this);
         }
 
         public bool IsOverInterface(Vector2 screenPoint)
         {
             var p = new Vector2(screenPoint.x * 1920f / Screen.width, (Screen.height - screenPoint.y) * 1080f / Screen.height);
-            return Guide.Contains(p) || Views.Contains(p) || HandPanel.Contains(p);
+            return Guide.Contains(p) || Views.Contains(p) || HandPanel.Contains(p) || (Selected != null && PosePanel.Contains(p));
         }
 
         public Rigidbody PickCard(Vector2 screenPoint)
@@ -73,6 +77,7 @@ namespace Hatdon.CardStacker
 
         public void SelectCard(Rigidbody card)
         {
+            if (Manipulator != null) Manipulator.EndDrag();
             Selected = System.Array.IndexOf(Hands, card) >= 0 ? card : null;
         }
 
@@ -84,22 +89,27 @@ namespace Hatdon.CardStacker
             Vector2 pointer = Input.mousePosition;
             bool overUI = IsOverInterface(pointer);
             hovered = overUI ? null : PickCard(pointer);
-            if (Input.GetMouseButtonDown(0) && !overUI) SelectCard(hovered);
+            if (Input.GetMouseButtonDown(0) && !overUI && !Manipulator.BeginDrag(pointer)) SelectCard(hovered);
+            if (Input.GetMouseButton(0) && Manipulator.Dragging)
+                Manipulator.DragTo(pointer, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+            if (!Input.GetMouseButton(0) && Manipulator.Dragging) Manipulator.EndDrag();
+            if (Input.GetKeyDown(KeyCode.W)) Manipulator.SetTool(CardManipulator.Tool.Move);
+            if (Input.GetKeyDown(KeyCode.E)) Manipulator.SetTool(CardManipulator.Tool.Rotate);
             if (Input.GetKeyDown(KeyCode.Escape)) SelectCard(null);
             if (Input.GetKeyDown(KeyCode.F)) FocusSelection();
             if (Input.GetKeyDown(KeyCode.Home)) ResetView();
-            if (Input.GetMouseButtonDown(1) && !overUI)
+            if (Input.GetMouseButtonDown(1) && !overUI && !Manipulator.Dragging)
             {
                 orbiting = true;
                 BeginOrbit();
             }
-            if (Input.GetMouseButtonDown(2) && !overUI) panning = true;
+            if (Input.GetMouseButtonDown(2) && !overUI && !Manipulator.Dragging) panning = true;
             Vector2 delta = pointer - lastPointer;
-            if (orbiting && Input.GetMouseButton(1)) Orbit(delta);
-            if (panning && Input.GetMouseButton(2)) Pan(delta);
+            if (orbiting && Input.GetMouseButton(1) && !Manipulator.Dragging) Orbit(delta);
+            if (panning && Input.GetMouseButton(2) && !Manipulator.Dragging) Pan(delta);
             if (!Input.GetMouseButton(1)) orbiting = false;
             if (!Input.GetMouseButton(2)) panning = false;
-            if (!overUI && Mathf.Abs(Input.mouseScrollDelta.y) > 0) Zoom(Input.mouseScrollDelta.y);
+            if (!overUI && !Manipulator.Dragging && Mathf.Abs(Input.mouseScrollDelta.y) > 0) Zoom(Input.mouseScrollDelta.y);
             lastPointer = pointer;
         }
 
@@ -200,12 +210,28 @@ namespace Hatdon.CardStacker
             GUI.matrix = Matrix4x4.Scale(new Vector3(Screen.width / 1920f, Screen.height / 1080f, 1));
             Panel(Guide); Panel(Views); Panel(HandPanel);
             GUI.Label(new Rect(42, 38, 310, 30), "CONTROLS", heading);
-            string[] rows = { "Left-click card   Select", "Left-click table   Deselect", "Right-drag   Orbit camera", "Middle-drag   Pan camera", "Mouse wheel   Zoom", "F   Focus selected card", "Home   Reset camera", "Esc   Deselect" };
+            string[] rows = { "Left-click card   Select", "Left-click table   Deselect", "W   Move handles", "E   Rotation rings", "Drag a coloured handle to adjust", "Shift + drag   Fine adjustment", "Right-drag   Orbit camera", "Middle-drag   Pan camera", "Mouse wheel   Zoom", "F   Focus selected card", "Home   Reset camera", "Esc   Deselect" };
             for (int i = 0; i < rows.Length; i++) GUI.Label(new Rect(42, 78 + i * 27, 315, 27), rows[i], text);
             GUI.Label(new Rect(1494, 34, 390, 25), "ALIGNMENT VIEWS", muted);
             if (GUI.Button(new Rect(1494, 66, 120, 34), "Front", button)) QuickView(0);
             if (GUI.Button(new Rect(1626, 66, 120, 34), "Side", button)) QuickView(1);
             if (GUI.Button(new Rect(1758, 66, 120, 34), "Overhead", button)) QuickView(2);
+            if (Selected != null)
+            {
+                Panel(PosePanel);
+                GUI.Label(new Rect(42, 474, 340, 26), "ADJUST SELECTED CARD", heading);
+                GUI.backgroundColor = Manipulator.Mode == CardManipulator.Tool.Move ? new Color(1, .75f, .3f) : Color.white;
+                if (GUI.Button(new Rect(42, 510, 160, 34), "Move  W", button)) Manipulator.SetTool(CardManipulator.Tool.Move);
+                GUI.backgroundColor = Manipulator.Mode == CardManipulator.Tool.Rotate ? new Color(1, .75f, .3f) : Color.white;
+                if (GUI.Button(new Rect(212, 510, 170, 34), "Rotate  E", button)) Manipulator.SetTool(CardManipulator.Tool.Rotate);
+                GUI.backgroundColor = Color.white;
+                Vector3 p = Selected.position * 1000, a = Selected.rotation.eulerAngles;
+                a = new Vector3(Mathf.DeltaAngle(0, a.x), Mathf.DeltaAngle(0, a.y), Mathf.DeltaAngle(0, a.z));
+                GUI.Label(new Rect(42, 558, 345, 26), $"mm   X {p.x:F1}   Y {p.y:F1}   Z {p.z:F1}", text);
+                GUI.Label(new Rect(42, 588, 345, 26), $"deg  X {a.x:F1}   Y {a.y:F1}   Z {a.z:F1}", text);
+                GUI.Label(new Rect(42, 628, 345, 26), Manipulator.ContactBlocked ? "Contact — adjustment limited" : Manipulator.FineAdjustment ? "Fine adjustment · 10% sensitivity" : "X red   ·   Y green   ·   Z blue", muted);
+                Manipulator.DrawAxisLabels(heading);
+            }
             GUI.Label(new Rect(610, 966, 700, 25), Selected == null ? "No card selected — click a card or choose a hand" : "Selected: " + (Selected == Hands[0] ? "left-hand card" : "right-hand card"), text);
             for (int i = 0; i < Mathf.Min(2, Hands.Length); i++)
             {
@@ -213,7 +239,7 @@ namespace Hatdon.CardStacker
                 if (GUI.Button(new Rect(610 + i * 350, 1002, 330, 36), (i == 0 ? "LEFT HAND" : "RIGHT HAND") + "  ·  Holding card", button)) SelectCard(Hands[i]);
             }
             GUI.backgroundColor = Color.white;
-            GUI.Label(new Rect(24, 1000, 530, 55), "Selection + camera prototype\nCards stay held. Movement and release come next.", muted);
+            GUI.Label(new Rect(24, 1000, 530, 55), "Drag a handle to adjust the selected card.\nBoth hands keep holding; release comes next.", muted);
             GUI.matrix = old;
         }
 
@@ -229,6 +255,15 @@ namespace Hatdon.CardStacker
         {
             if (outlines != null) foreach (var line in outlines) if (line != null) Destroy(line.gameObject);
             if (outlineMaterial != null) Destroy(outlineMaterial);
+        }
+
+        private void OnApplicationFocus(bool focused)
+        {
+            if (!focused)
+            {
+                orbiting = panning = false;
+                if (Manipulator != null) Manipulator.EndDrag();
+            }
         }
     }
 }

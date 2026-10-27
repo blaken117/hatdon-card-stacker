@@ -1,5 +1,17 @@
 # Development record
 
+## 2026-10-27 — Prototype 002: card movement and rotation
+
+User approved adding precise movement and rotation of the selected card, Shift fine adjustment, live position/angle feedback and contact checks. The two existing hands remain occupied and held; releasing is intentionally a later milestone.
+
+`CardManipulator` renders screen-sized world X/Y/Z arrows or rotation rings with a small overlay shader. Picking uses projected handle segments, then incremental pointer deltas control an axis. Movement projects pointer delta onto the axis; rotation projects it onto the selected ring tangent. Shift multiplies both by 0.1 without jumping when toggled. W/E and the selected-card panel switch tools. The panel shows world position in millimetres and world Euler angles in degrees. The other hand is never repositioned by the selected card's adjustments.
+
+Placement checks Unity box penetration against the table and other card, sampling at most 0.2mm of translation or 0.2 degrees of rotation per step, with eight bisection refinements at contact. Penetration tolerance is one micrometre. This prevents the thin cards from being teleported through each other even if the requested endpoint is clear. It is a kinematic stop, not a force-based grip, snapping, physical stability or card flex. Placement is bounded near the table. Camera gestures are suppressed during card dragging and focus loss cancels gestures without releasing either card.
+
+Movement verification covers free XYZ translation/rotation, screen picking of arrows/rings, 10x fine movement/rotation, table stops, card-to-card stops, thin-face crossing, rotation-corner contact, moving away from contact and unchanged second-hand pose. The selection/camera regression suite remains applicable.
+
+Both movement and selection/camera suites passed in the Windows development player. A clean capture build recorded Prototype 002 Take 01: 45 seconds at 1920x1080 / 30fps, showing all three movement/rotation axes, actual Shift handle-drag logic, hand switching and contact limits. The selected-card UI and gizmos were visually checked. Preserve it under `DevLogs/Card-Stacker/prototypes/002-card-manipulation/` with the build, source archive, cue sheet and checksums. Release and balance remain unimplemented.
+
 ## Dev-log preservation and recording
 
 Meaningful prototypes are preserved as a source commit/tag, complete standalone Windows build, clean 1920x1080 footage, screenshot and local manifest with checksums and cue points. Footage/build archives live outside the public source repository under `DevLogs/Card-Stacker/prototypes/`. Small fixes do not need separate takes unless their behavior is useful to show.

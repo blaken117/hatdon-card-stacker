@@ -4,7 +4,7 @@ A Unity experiment about building structures from playing cards using two virtua
 
 ## Status
 
-Selection and camera prototype. Two cards remain held while you select them and inspect the table. Card positioning, rotation and release are the next milestone; this is not a finished game.
+Card movement and rotation prototype. Select either held card and use world-axis handles to position and rotate it, with fine adjustment and contact limits. Release and physical balancing are the next milestone; this is not a finished game.
 
 ## Open the project
 
@@ -24,6 +24,9 @@ The setup scene contains a table, camera, light and two held test cards. Press *
 | Left-click a card | Select it; gold outline |
 | Left-click empty table / Esc | Deselect; both cards remain held |
 | Left / Right hand buttons | Switch selected held card |
+| W / Move button | Show X/Y/Z movement handles; drag an arrow |
+| E / Rotate button | Show X/Y/Z rotation rings; drag a ring |
+| Shift while dragging | One-tenth movement or rotation sensitivity |
 | Right-drag | Orbit selected card, or table centre |
 | Middle-drag | Pan |
 | Mouse wheel | Zoom within near/far limits |
@@ -31,7 +34,9 @@ The setup scene contains a table, camera, light and two held test cards. Press *
 | Home | Restore initial camera |
 | Front / Side / Overhead buttons | Alignment views |
 
-Selecting a card does not move the camera. The camera stays above the tabletop. Both hand slots currently start occupied; picking up, moving and releasing cards are not implemented yet.
+Selecting a card does not move the camera. The camera stays above the tabletop. Both hand slots currently start occupied. Adjusting one card keeps the other held in place. Position is shown in world millimetres and rotation in world Euler degrees. Red is X, green is Y (height), blue is Z. Choose a different camera view if an axis is viewed end-on.
+
+Moves and rotations stop when the card meets the table or other card. Contact is checked in small swept steps with a refined stopping point; cards do not push each other while both are held. This is a kinematic placement constraint, not a physical balance simulation. Picking up additional cards and releasing the held cards are not implemented yet.
 
 ## Intended interaction
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## Card manipulation — 2026-10-27
+
+- Added draggable world-axis movement arrows (W) and rotation rings (E).
+- Added Shift fine adjustment at 10% sensitivity, live millimetre/degree readouts and colour-coded axis labels.
+- Added swept contact checks for translation and rotation against the table and other card, including thin-face crossing.
+- Added contact feedback, bounded placement, and drag cancellation on focus loss.
+- Kept the other card held and camera controls separate; no card release or balancing yet.
+- Added movement tests and a second dev-log demonstration sequence.
+
 ## Dev-log capture workflow — 2026-10-27
 
 - Added an opt-in automated demo recorder for existing selection and camera controls.
