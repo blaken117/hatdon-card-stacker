@@ -1,5 +1,11 @@
 # Changelog
 
+## Dev-log capture workflow — 2026-10-27
+
+- Added an opt-in automated demo recorder for existing selection and camera controls.
+- Added a clean capture build option and fixed-frame 1920x1080 / 30fps video output.
+- First milestone preserves source, complete Windows build and a selection/camera take.
+
 ## Selection and camera — 2026-10-27
 
 - Added card picking, blue hover outline and gold selection outline.

@@ -47,6 +47,8 @@ Start by proving a stable two-card tent, then add more cards. Rigid cards are th
 
 Small, meaningful commits preserve each working change. Reviewed dev-log milestones receive annotated tags; setup is not a released gameplay prototype. See `Docs/DEVELOPMENT.md` and `CHANGELOG.md`.
 
+Dev-log takes preserve the complete Windows build alongside a source archive, capture manifest and clean gameplay footage. The recording helper runs an explicitly requested automated demonstration of existing controls; it does not add card-placement gameplay.
+
 Track `Assets` (including `.meta` files), `Packages` and `ProjectSettings`. Generated caches, builds, local settings and credentials are excluded. Git is the source of truth; Unity Version Control is not configured alongside it.
 
 ## Reuse

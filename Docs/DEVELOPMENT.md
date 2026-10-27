@@ -1,5 +1,13 @@
 # Development record
 
+## Dev-log preservation and recording
+
+Meaningful prototypes are preserved as a source commit/tag, complete standalone Windows build, clean 1920x1080 footage, screenshot and local manifest with checksums and cue points. Footage/build archives live outside the public source repository under `DevLogs/Card-Stacker/prototypes/`. Small fixes do not need separate takes unless their behavior is useful to show.
+
+Prototype 001 is selection and camera control. Its first take is a deterministic 42-second demonstration using the real control methods in a running Unity player. It is automated demonstration footage, not a human play-test. The recording build uses `HATDON_CAPTURE` to enable an opt-in `-recordDevlog` runner without the development-build watermark. Normal launch still runs the interactive game; the recording runner activates only with explicit capture arguments. Frames are captured after rendering, including the actual HUD, and encoded at 1920x1080 / 30fps. No game audio exists at this milestone, so the take is silent.
+
+The capture demonstrates hover/select/deselect, both hand slots, focus, orbit, pan, zoom, front/side/overhead and reset. The two cards remain held throughout; movement and release are not demonstrated or claimed.
+
 ## 2026-10-27 — Selection and camera prototype
 
 User approved click selection, two hand slots, hover/selection outlines, orbit/pan/zoom, focus/reset and alignment views, with clear controls in the UI.

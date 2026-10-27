@@ -20,6 +20,10 @@ namespace Hatdon.CardStacker
         private static readonly Rect Guide = new Rect(24, 24, 352, 310);
         private static readonly Rect Views = new Rect(1476, 24, 420, 90);
         private static readonly Rect HandPanel = new Rect(590, 954, 740, 102);
+#if HATDON_CAPTURE
+        public bool CaptureMode { get; set; }
+        public void CaptureHover(Vector2 point) { hovered = PickCard(point); }
+#endif
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void StartControls()
@@ -74,6 +78,9 @@ namespace Hatdon.CardStacker
 
         private void Update()
         {
+#if HATDON_CAPTURE
+            if (CaptureMode) return;
+#endif
             Vector2 pointer = Input.mousePosition;
             bool overUI = IsOverInterface(pointer);
             hovered = overUI ? null : PickCard(pointer);
@@ -84,7 +91,7 @@ namespace Hatdon.CardStacker
             if (Input.GetMouseButtonDown(1) && !overUI)
             {
                 orbiting = true;
-                Pivot = Selected != null ? Selected.worldCenterOfMass : new Vector3(0, 0.04f, 0);
+                BeginOrbit();
             }
             if (Input.GetMouseButtonDown(2) && !overUI) panning = true;
             Vector2 delta = pointer - lastPointer;
@@ -103,6 +110,11 @@ namespace Hatdon.CardStacker
             float next = Mathf.Clamp(pitch - pixels.y * 0.22f, 10f, 85f);
             transform.RotateAround(Pivot, transform.right, next - pitch);
             KeepAboveTable();
+        }
+
+        public void BeginOrbit()
+        {
+            Pivot = Selected != null ? Selected.worldCenterOfMass : new Vector3(0, 0.04f, 0);
         }
 
         public void Pan(Vector2 pixels)
