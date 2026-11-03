@@ -1,5 +1,17 @@
 # Development record
 
+## 2026-11-03 — Prototype 005: deck and mouse controls
+
+The table starts empty with a 52-card stock. Dragging the visible deck draws exactly one card into the preferred free hand, or the other hand if occupied. Full hands refuse another draw without consuming stock. The first pickup uses a horizontal plane 60mm above the tabletop; later W drags use the camera-facing plane through the card. Q maps vertical pointer motion to view depth, E uses a virtual trackball around the unchanged rigid-body centre, and T twists about the viewing axis. Shift scales movement/rotation to one tenth. Camera orbit/pan/zoom remain separate. Player-facing axis arrows/rings are removed; the midpoint marker and world pose readouts remain.
+
+Both locks are still required for joint commit. Committed cards remain dynamic while subsequent draws fill the freed slots. Collision obstacles refresh per placement operation, so newly drawn and previously released cards participate in swept contact checks. Wooden desktop and floor colliders provide support outside the felt; decorative props remain nonphysical and the deck picking trigger is excluded from placement contact. Reset cleans up clones, hides the original templates and refills stock. The stock count is 52 but printed faces currently reuse the existing ace/seven art.
+
+The new automated deck/mouse suite checks empty start, actual stock ray picking, one-card-per-drag, two-hand capacity, view/depth movement, Shift sensitivity, centre-preserving trackball/twist, release and continued drawing, contact with previously placed cards, and full reset. Legacy regression fixtures explicitly create a held pair instead of altering the normal empty start. Existing physical card parameters and lock/fall/triangle tests remain in use.
+
+Validation passed in the Windows player: deck/mouse suite, selection/camera suite, movement/contact suite and full balance suite. The 24/28/32-degree triangles remained standing with maximum drift 0.0121/0.0153/0.0192mm over 20 simulated seconds; the misaligned pair still fell. Both development and clean capture builds compile. A first pickup test exposed a per-step movement cap before reaching the pickup plane; pickup now uses bounded swept increments to reach its plane while respecting contact.
+
+Prototype 005's capture helper uses deck picking and the real pointer-drag paths, then locks/commits a pair and draws a third card. It is an automated demonstration, not human play-test footage. Build, source, footage and test records belong under `DevLogs/Card-Stacker/prototypes/005-deck-mouse-controls/`.
+
 ## 2026-11-03 — Locked contact and a failed placement
 
 User asked whether the other card stops at a locked card and requested a visibly misaligned placement that falls. The held movement logic already rejects penetration. The added check keeps the first hand locked, requests a 12mm move through its contact boundary, verifies that the second card stops on its own side and that the locked body has neither moved nor rotated.

@@ -1,5 +1,14 @@
 # Changelog
 
+## Deck and mouse controls — 2026-11-03
+
+- Start with an empty table and a 52-card deck; drag one card into each free hand.
+- Replace player-facing axis handles with W view-plane movement, Q depth, E midpoint trackball rotation and T twist, all driven by mouse drags with Shift precision.
+- Commit frees both hands while previous cards remain dynamic; new draws respect their contact surfaces.
+- Reset clears drawn cards and refills the deck. Add deck count and updated on-screen instructions.
+- Add physical wood/floor surfaces, deck picking and regression coverage for the new draw/control cycle.
+- Preserve the existing card mass, paper/felt friction and release physics. Face art currently repeats the two existing designs.
+
 ## Locked-contact and failed-placement verification — 2026-11-03
 
 - Added explicit assertions that dragging into a locked card stops movement without pushing the locked card.

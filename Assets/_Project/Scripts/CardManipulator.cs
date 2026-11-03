@@ -4,7 +4,7 @@ namespace Hatdon.CardStacker
 {
     public sealed class CardManipulator : MonoBehaviour
     {
-        public enum Tool { Move, Rotate }
+        public enum Tool { Move, Rotate, Depth, Roll }
         public Tool Mode { get; private set; }
         public bool Dragging { get; private set; }
         public bool ContactBlocked { get; private set; }
@@ -17,12 +17,14 @@ namespace Hatdon.CardStacker
         private Camera view;
         private Collider[] obstacles;
         private readonly Vector3[] axes = { Vector3.right, Vector3.up, Vector3.forward };
-        private readonly Color[] colors = { new Color(1, .3f, .3f), new Color(.35f, 1, .5f), new Color(.3f, .65f, 1) };
         private LineRenderer[] lines;
         private Material material;
         private Vector2 previousPointer;
         private Vector3 rotationRadial;
         private float contactUntil;
+        private Plane pointerPlane;
+        private Vector2 pointerCentre;
+        private const float ArcballRadius=120;
         public float HandleSize => Mathf.Clamp(Vector3.Distance(view.transform.position, controls.Selected.position) * .14f, .018f, .2f);
 
         public void Initialise(CardStackerControls owner)
@@ -46,6 +48,67 @@ namespace Hatdon.CardStacker
 
         public void SetTool(Tool tool) { EndDrag(); Mode = tool; }
         public void EndDrag() { Dragging = false; ActiveAxis = -1; FineAdjustment = false; }
+
+        public bool BeginPointerDrag(Vector2 pointer)
+        {
+            if(!controls.CanManipulate)return false;
+            EndDrag();Dragging=true;previousPointer=pointer;
+            pointerPlane=new Plane(view.transform.forward,controls.Selected.position);
+            pointerCentre=view.WorldToScreenPoint(controls.Selected.position);
+            return true;
+        }
+
+        public bool BeginDeckDrag(Vector2 pointer)
+        {
+            if(!BeginPointerDrag(pointer))return false;
+            // The initial pull travels above the tabletop, so drawing toward its centre is natural.
+            pointerPlane=new Plane(Vector3.up,new Vector3(0,.06f,0));
+            Ray ray=view.ScreenPointToRay(pointer);
+            if(pointerPlane.Raycast(ray,out float distance))
+            {
+                Vector3 target=ray.GetPoint(distance);
+                for(int i=0;i<12 && Vector3.Distance(target,controls.Selected.position)>.00001f;i++)
+                    if(!Translate(Vector3.ClampMagnitude(target-controls.Selected.position,.04f)))break;
+            }
+            pointerPlane=new Plane(Vector3.up,controls.Selected.position);
+            return true;
+        }
+
+        private Vector3 Ball(Vector2 pixel)
+        {
+            float radius=ArcballRadius*Screen.height/1080f;
+            Vector2 p=(pixel-pointerCentre)/radius;
+            if(p.sqrMagnitude>1)return new Vector3(p.normalized.x,p.normalized.y,0);
+            return new Vector3(p.x,p.y,Mathf.Sqrt(1-p.sqrMagnitude));
+        }
+
+        public void DragPointerTo(Vector2 pointer,bool fine)
+        {
+            if(!Dragging || !controls.CanManipulate)return;
+            FineAdjustment=fine;float precision=fine ? .1f : 1;
+            Vector2 delta=pointer-previousPointer;
+            if(Mode==Tool.Move)
+            {
+                Ray a=view.ScreenPointToRay(previousPointer),b=view.ScreenPointToRay(pointer);
+                if(pointerPlane.Raycast(a,out float da) && pointerPlane.Raycast(b,out float db))
+                    Translate((b.GetPoint(db)-a.GetPoint(da))*precision);
+            }
+            else if(Mode==Tool.Depth)
+            {
+                float distance=Vector3.Distance(view.transform.position,controls.Selected.position);
+                float metres=2*distance*Mathf.Tan(view.fieldOfView*Mathf.Deg2Rad/2)/Screen.height;
+                Translate(view.transform.forward*(delta.y*metres*precision));
+            }
+            else if(Mode==Tool.Roll)Rotate(view.transform.forward,-delta.x*.35f*precision);
+            else
+            {
+                Quaternion local=Quaternion.FromToRotation(Ball(previousPointer),Ball(pointer));
+                Quaternion world=view.transform.rotation*local*Quaternion.Inverse(view.transform.rotation);
+                world=Quaternion.Slerp(Quaternion.identity,world,precision);
+                ApplyPose(controls.Selected.position,world*controls.Selected.rotation);
+            }
+            previousPointer=pointer;
+        }
 
         private Vector3 RingPoint(int axis, float angle, float size)
         {
@@ -122,8 +185,8 @@ namespace Hatdon.CardStacker
         {
             if (!controls.CanManipulate) return false;
             Vector3 target = controls.Selected.position + Vector3.ClampMagnitude(delta, .12f);
-            target.x = Mathf.Clamp(target.x, -.36f, .36f);
-            target.z = Mathf.Clamp(target.z, -.26f, .26f);
+            target.x = Mathf.Clamp(target.x, -.44f, .44f);
+            target.z = Mathf.Clamp(target.z, -.39f, .39f);
             target.y = Mathf.Clamp(target.y, 0, .4f);
             return ApplyPose(target, controls.Selected.rotation);
         }
@@ -148,6 +211,7 @@ namespace Hatdon.CardStacker
 
         private bool ApplyPose(Vector3 position, Quaternion rotation)
         {
+            obstacles=FindObjectsByType<Collider>(FindObjectsSortMode.None);
             var card = controls.Selected;
             Vector3 start = card.position; Quaternion initial = card.rotation;
             // Small swept increments stop thin cards tunnelling during translation or rotation.
@@ -184,37 +248,14 @@ namespace Hatdon.CardStacker
             {
                 var line = lines[i]; line.enabled = controls.CanManipulate;
                 if (!line.enabled) continue;
-                float size = HandleSize;
-                line.widthMultiplier = size * (ActiveAxis == i ? .035f : .021f);
-                line.startColor = line.endColor = ActiveAxis == i ? Color.white : colors[i];
-                line.loop = Mode == Tool.Rotate;
-                if (Mode == Tool.Move)
-                {
-                    line.positionCount = 5;
-                    Vector3 origin = controls.Selected.position, tip = origin + axes[i] * size;
-                    Vector3 side = Vector3.Cross(axes[i], view.transform.forward).normalized * size * .08f;
-                    line.SetPosition(0, origin + axes[i] * size * .12f); line.SetPosition(1, tip);
-                    line.SetPosition(2, tip - axes[i] * size * .16f + side); line.SetPosition(3, tip);
-                    line.SetPosition(4, tip - axes[i] * size * .16f - side);
-                }
-                else
-                {
-                    line.positionCount = 96;
-                    for (int j = 0; j < 96; j++) line.SetPosition(j, RingPoint(i, j * Mathf.PI * 2 / 96, size * .8f));
-                }
-            }
-        }
-
-        public void DrawAxisLabels(GUIStyle style)
-        {
-            if (!controls.CanManipulate || Mode != Tool.Move) return;
-            for (int i = 0; i < 3; i++)
-            {
-                Vector3 p = view.WorldToScreenPoint(controls.Selected.position + axes[i] * HandleSize * 1.12f);
-                if (p.z <= 0) continue;
-                Color old = GUI.color; GUI.color = colors[i];
-                GUI.Label(new Rect(p.x * 1920f / Screen.width - 10, (Screen.height - p.y) * 1080f / Screen.height - 12, 30, 30), "XYZ"[i].ToString(), style);
-                GUI.color = old;
+                // Direct mouse controls use a subtle centre marker rather than draggable axis handles.
+                if(i>0){line.enabled=false;continue;}
+                float distance=Vector3.Distance(view.transform.position,controls.Selected.position);
+                float marker=distance*.006f;
+                line.loop=false;line.positionCount=5;line.widthMultiplier=distance*.0015f;
+                line.startColor=line.endColor=Dragging ? Color.white : new Color(1,.78f,.35f,.8f);
+                Vector3 p=controls.Selected.position,r=view.transform.right*marker,u=view.transform.up*marker;
+                line.SetPosition(0,p-r);line.SetPosition(1,p+r);line.SetPosition(2,p);line.SetPosition(3,p-u);line.SetPosition(4,p+u);
             }
         }
 

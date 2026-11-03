@@ -22,6 +22,7 @@ namespace Hatdon.CardStacker
             {
                 Physics.simulationMode=SimulationMode.Script;
                 var c=FindFirstObjectByType<CardStackerControls>();var s=c.Placement;
+                s.PrepareTestPair();
                 var left=c.Hands[0];var right=c.Hands[1];
                 Require(!s.CommitBoth(),"Cannot commit without both locks");
                 c.SelectCard(left);s.LockHand(0);Require(!s.CanAdjust(left),"Locked card cannot move");
@@ -29,7 +30,7 @@ namespace Hatdon.CardStacker
                 Require(!s.CommitBoth(),"One locked hand is insufficient");
                 Vector3 saved=left.position;c.SelectCard(left);
                 Require(!s.IsLocked(0) && s.CanAdjust(left) && left.position==saved,"Reopening hand unlocks without moving it");
-                s.ResetCards();
+                s.PrepareTestPair();
                 Pose(left,new Vector3(-.12f,.3f,0),Quaternion.Euler(20,0,0));
                 Pose(right,new Vector3(.12f,.3f,0),Quaternion.Euler(-20,0,0));
                 s.LockHand(0);s.LockHand(1);Vector3 before=left.position;
@@ -44,11 +45,11 @@ namespace Hatdon.CardStacker
                 Simulate(4);
                 Require(left.position.y<.002f && left.position.y>-.001f,"Unsupported card reaches the tabletop without tunnelling");
                 Require(Mathf.Abs(Vector3.Dot(left.rotation*Vector3.forward,Vector3.up))>.8f,"Unsupported tilted card falls flat");
-                s.ResetCards();Require(left.isKinematic && right.isKinematic && !s.IsCommitted && !s.BothLocked,"Reset restores editable held cards");
+                s.PrepareTestPair();Require(left.isKinematic && right.isKinematic && !s.IsCommitted && !s.BothLocked,"Reset restores editable held cards");
 
                 Pose(left,new Vector3(0,.1f,0),Quaternion.identity);Pose(right,left.position,Quaternion.identity);
                 s.LockHand(0);s.LockHand(1);Require(!s.CommitBoth() && left.isKinematic && right.isKinematic,"Overlap is rejected before release");
-                s.ResetCards();
+                s.PrepareTestPair();
 
                 // Assemble the same triangle through the real placement API, not a pose preset.
                 const float lean=28;
@@ -79,7 +80,7 @@ namespace Hatdon.CardStacker
                 Require(left.position.y>.025f && right.position.y>.025f,"Control-assembled triangle remains standing");
                 Debug.Log("HATDON_MANUAL_TRIANGLE_OK: Contact-aware placement API, lock both and commit remains standing for 20 seconds.");
 
-                s.ResetCards();Triangle(left,right,28);
+                s.PrepareTestPair();Triangle(left,right,28);
                 Pose(right,right.position+Vector3.forward*.068f,right.rotation);
                 s.LockHand(0);s.LockHand(1);Require(s.CommitBoth(),"Misaligned cards can commit when they do not overlap");
                 Simulate(5);
@@ -90,7 +91,7 @@ namespace Hatdon.CardStacker
                 var observations=new System.Collections.Generic.List<string>();
                 foreach(float degrees in new[]{24f,28f,32f})
                 {
-                    s.ResetCards();Triangle(left,right,degrees);
+                    s.PrepareTestPair();Triangle(left,right,degrees);
                     var a=left.gameObject.GetComponent<BalanceContactProbe>() ?? left.gameObject.AddComponent<BalanceContactProbe>();
                     var b=right.gameObject.GetComponent<BalanceContactProbe>() ?? right.gameObject.AddComponent<BalanceContactProbe>();
                     a.Clear();b.Clear();

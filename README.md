@@ -4,7 +4,7 @@ A Unity experiment about building structures from playing cards using two virtua
 
 ## Status
 
-Lock-and-commit physics prototype. Position each card, lock each hand, then commit both to release them into gravity and contact physics. Two-card triangles have been verified after release; this is not a finished game.
+Deck and mouse-control prototype. Drag cards from the deck into two free hands, position and lock each, then commit both into gravity and contact physics. Draw the next pair while earlier cards remain on the table. This is not a finished game.
 
 ## Open the project
 
@@ -14,24 +14,27 @@ Lock-and-commit physics prototype. Position each card, lock each hand, then comm
 4. Open `Assets/_Project/Scenes/CardStacker.unity`.
 5. To recreate the starting scene, choose **Hatdon > Card Stacker > Create Setup Scene** (this replaces it after confirmation).
 
-The setup scene contains a table, camera, light and two held test cards. Press **Play** to use selection, the camera and the on-screen control guide. No Asset Store assets or online services are required.
+Press **Play** to start with an empty table and a 52-card deck. The scene's two hidden card templates supply the first pair. No Asset Store assets or online services are required.
 
 ## Current controls
 
-The playing area now uses green felt on a walnut desktop, with a small reading lamp, spare deck and plant in a quiet room. The two held cards show original ace-of-spades and seven-of-hearts artwork, with matching navy patterned backs and rounded paper edges. Dressing applies automatically on Play in the existing scene. No colliders or rigid bodies are added by the artwork.
+The playing area uses green felt on a walnut desktop, with a reading lamp, deck and plant. Cards have original ace-of-spades and seven-of-hearts artwork, patterned backs and rounded paper edges. The deck currently repeats these two face designs rather than printing 52 unique faces. Dressing applies automatically on Play. The felt, wooden desktop and floor provide physical surfaces; the deck has a picking trigger.
 
 | Input | Action |
 | --- | --- |
 | Hover over a card | Subtle blue outline |
-| Left-click a card | Select it; gold outline |
+| Drag from deck | Draw one card into a free hand and pull it onto the table |
+| Left-click a card | Select it; gold outline; drag to adjust a held card |
 | Left-click empty table / Esc | Deselect without changing held/released state |
 | Left / Right hand buttons / Tab | Select hand; reopen its lock for adjustment |
-| W / Move button | Show X/Y/Z movement handles; drag an arrow |
-| E / Rotate button | Show X/Y/Z rotation rings; drag a ring |
+| W / Move button | Mouse drag moves across the camera view |
+| Q / Depth button | Mouse up/down moves nearer/farther along the view direction |
+| E / Rotate button | Mouse drag rotates around the card's fixed midpoint |
+| T / Twist button | Mouse left/right twists around the viewing axis |
 | Shift while dragging | One-tenth movement or rotation sensitivity |
 | L / Lock buttons | Lock a hand at its current pose; still held |
 | Enter / Commit both | Release both cards when both hands are locked |
-| R / Reset cards | Restore the starting held cards for another attempt |
+| R / Reset table | Clear all cards and refill the deck |
 | Right-drag | Orbit selected card, or table centre |
 | Middle-drag | Pan |
 | Mouse wheel | Zoom within near/far limits |
@@ -39,13 +42,13 @@ The playing area now uses green felt on a walnut desktop, with a small reading l
 | Home | Restore initial camera |
 | Front / Side / Overhead buttons | Alignment views |
 
-Selecting a card does not move the camera. The camera stays above the tabletop. Both hand slots currently start occupied. Adjusting one card keeps the other held in place. Position is shown in world millimetres and rotation in world Euler degrees. Red is X, green is Y (height), blue is Z. Choose a different camera view if an axis is viewed end-on.
+Selecting a card does not move the camera. The first drag from the deck pulls the card onto a horizontal plane 60mm above the tabletop. Subsequent W drags move across the camera view; use Q for depth. E uses a virtual trackball, while T gives a separate twist. Shift reduces sensitivity to one tenth. Position readouts use world millimetres and rotation uses world Euler degrees. Two hands can be occupied at once; selecting a locked hand reopens it.
 
-Moves and rotations stop when the card meets the table or other card. Contact is checked in small swept steps with a refined stopping point; cards do not push each other while held. Selecting a locked hand reopens it; lock it again before committing. Both locks are required, and overlapping placements are rejected. Commit changes both bodies to dynamic in the same update without moving them or adding a release impulse. Released cards can be inspected but cannot be repositioned with handles. Reset to try again.
+Moves and rotations stop at physical surfaces and other cards, including earlier placed cards. Contact uses small swept steps with a refined stopping point. Both occupied hands must be locked, and overlapping placements refuse commit. Commit changes both bodies to dynamic without moving them or adding a release impulse, then frees the hands for the next draws. Released cards remain simulated and inspectable; mouse adjustment applies only to held cards. Reset clears the table.
 
 The locked-card check is explicitly tested: dragging the other card through it stops the moving card and leaves the locked pose unchanged. A separate failed-placement test offsets the second card in depth so their upper edges miss; after commit, both fall flat through gravity without an added push. The successful aligned triangle and failed placement use the same physics settings.
 
-The rigid-card model uses 63x88x0.32mm cards at 1.8g, 240Hz physics, finite paper/felt friction, zero bounce and low linear/angular damping. These are initial approximation/tuning values, not measured material calibration. Card flex, humidity, edge deformation and orientation-dependent aerodynamics are not simulated. No joints, frozen constraints, automatic balance or post-release pose corrections hold a structure up. Additional cards and individual release remain future work.
+The rigid-card model uses 63x88x0.32mm cards at 1.8g, 240Hz physics, finite paper/felt friction, zero bounce and low linear/angular damping. These are initial approximation/tuning values, not measured material calibration. Card flex, humidity, edge deformation and orientation-dependent aerodynamics are not simulated. No joints, frozen constraints, automatic balance or post-release pose corrections hold a structure up. Release is still a joint two-card commit.
 
 ## Intended interaction
 

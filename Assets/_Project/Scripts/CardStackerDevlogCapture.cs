@@ -53,6 +53,9 @@ namespace Hatdon.CardStacker
             if(physicsTake){naturalTake=true;frames=900;}
             fallTake=Array.IndexOf(arguments,"-recordFallTake")>=0;
             if(fallTake){physicsTake=true;naturalTake=true;frames=840;}
+            deckTake=Array.IndexOf(arguments,"-recordDeckTake")>=0;
+            if(deckTake){naturalTake=true;frames=900;}
+            else controls.Placement.PrepareTestPair();
             controls.SelectCard(null);
             controls.ResetView();
             Time.captureFramerate = Fps;
@@ -74,7 +77,8 @@ namespace Hatdon.CardStacker
             var endOfFrame = new WaitForEndOfFrame();
             for (int frame = 0; frame < frames; frame++)
             {
-                if (physicsTake) DemonstratePhysics(frame);
+                if (deckTake) DemonstrateDeck(frame);
+                else if (physicsTake) DemonstratePhysics(frame);
                 else if (artTake) DemonstrateArt(frame);
                 else if (naturalTake) DemonstrateNatural(frame);
                 else if (milestone == 1) Demonstrate(frame); else DemonstrateMovement(frame);
@@ -94,6 +98,7 @@ namespace Hatdon.CardStacker
             }
             encoder.StandardInput.Close();
             encoder.WaitForExit();
+            if(deckTake && !DeckTakeValid()){UnityEngine.Debug.LogError("Deck demonstration final state is invalid.");Application.Quit(12);yield break;}
             if(physicsTake && !(fallTake ? PhysicsTakeFallen() : PhysicsTakeStanding()))
             { UnityEngine.Debug.LogError(fallTake ? "Misaligned cards did not fall as expected in the recording." : "Released triangle did not remain standing in the recording.");Application.Quit(7);yield break; }
             if (encoder.ExitCode != 0) { UnityEngine.Debug.LogError(encoderErrors.Result); Application.Quit(4); }

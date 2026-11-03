@@ -24,6 +24,7 @@ namespace Hatdon.CardStacker
             {
                 Require(controls != null && controls.Hands.Length == 2, "Two hand slots initialise");
                 Require(controls.Selected == null, "No initial selection");
+                controls.Placement.PrepareTestPair();
                 Vector3 cameraPosition = controls.transform.position;
                 Quaternion cameraRotation = controls.transform.rotation;
                 var positions = new[] { controls.Hands[0].position, controls.Hands[1].position };

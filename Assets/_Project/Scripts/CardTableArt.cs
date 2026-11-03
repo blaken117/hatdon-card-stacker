@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 namespace Hatdon.CardStacker
 {
-    // Cosmetic dressing only: creates no colliders or rigid bodies.
+    // Room dressing, solid desk/floor, and a stock-picking trigger. Loose props stay decorative.
     public sealed class CardTableArt : MonoBehaviour
     {
         private readonly List<Object> owned = new List<Object>();
@@ -109,7 +109,9 @@ namespace Hatdon.CardStacker
             var table = GameObject.Find("Table");
             table.GetComponent<Renderer>().sharedMaterial = wood;
             table.GetComponent<Renderer>().enabled=false; // Keep its collider; the dressed desktop and felt render the surface.
-            Shape("Walnut desktop",PrimitiveType.Cube,new Vector3(0,-.024f,0),new Vector3(.94f,.044f,.82f),wood);
+            var desktop=Shape("Walnut desktop",PrimitiveType.Cube,new Vector3(0,-.024f,0),new Vector3(.94f,.044f,.82f),wood);
+            var woodContact=new PhysicsMaterial("Walnut contact") { staticFriction=.45f,dynamicFriction=.30f,bounciness=0 };
+            owned.Add(woodContact);desktop.AddComponent<BoxCollider>().sharedMaterial=woodContact;desktop.GetComponent<Collider>().contactOffset=.000025f;
             Shape("Felt playing surface",PrimitiveType.Cube,new Vector3(0,-.000505f,0),new Vector3(.799f,.001f,.599f),felt);
             Shape("Desktop bevel / apron",PrimitiveType.Cube,new Vector3(0,-.052f,0),new Vector3(.91f,.025f,.79f),wood);
             var thread = Surface("Felt stitch", "#829878",null,.02f);
@@ -141,6 +143,7 @@ namespace Hatdon.CardStacker
             var top = new GameObject("Top card");top.transform.SetParent(deck.transform,false);
             top.transform.localPosition=new Vector3(0,.0095f,0);top.transform.localScale=new Vector3(.063f,.088f,.0008f);top.transform.localRotation=Quaternion.Euler(-90,0,0);
             PrintedFace(top.transform,true,back);
+            var deckHit=deck.AddComponent<BoxCollider>();deckHit.center=new Vector3(0,.005f,0);deckHit.size=new Vector3(.066f,.012f,.091f);deckHit.isTrigger=true;
 
             var lamp = new GameObject("Warm reading lamp");lamp.transform.SetParent(transform,false);lamp.transform.localPosition=new Vector3(.35f,0,.32f);
             Shape("Lamp base",PrimitiveType.Cylinder,new Vector3(0,.007f,0),new Vector3(.09f,.007f,.09f),charcoal,lamp.transform);
@@ -167,7 +170,8 @@ namespace Hatdon.CardStacker
 
             var floor=Surface("Dark timber floor", "#867263","walnut-grain",.12f);floor.mainTextureScale=new Vector2(4,4);
             var wall=Surface("Quiet teal walls", "#344746",null,.02f);
-            Shape("Room floor",PrimitiveType.Cube,new Vector3(0,-.74f,0),new Vector3(4,.04f,4),floor);
+            var floorObject=Shape("Room floor",PrimitiveType.Cube,new Vector3(0,-.74f,0),new Vector3(4,.04f,4),floor);
+            floorObject.AddComponent<BoxCollider>().sharedMaterial=woodContact;floorObject.GetComponent<Collider>().contactOffset=.000025f;
             Shape("Back wall",PrimitiveType.Cube,new Vector3(0,.2f,1.05f),new Vector3(4,2,.04f),wall);
             Shape("Left wall",PrimitiveType.Cube,new Vector3(-1.2f,.2f,0),new Vector3(.04f,2,4),wall);
             foreach(float x in new[]{-.35f,.35f}) foreach(float z in new[]{-.28f,.28f})
@@ -196,5 +200,12 @@ namespace Hatdon.CardStacker
         }
 
         private void OnDestroy() { foreach(var item in owned) if(item!=null) Destroy(item); }
+
+        public static void StyleDrawnCard(Rigidbody card,int number)
+        {
+            var art=FindFirstObjectByType<CardTableArt>();
+            var face=card.transform.Find("Printed playing-card face");
+            if(art!=null && face!=null)face.GetComponent<Renderer>().sharedMaterial=art.materials[number%2==0 ? "Ace of spades" : "Seven of hearts"];
+        }
     }
 }

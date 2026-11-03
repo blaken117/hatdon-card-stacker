@@ -21,6 +21,7 @@ namespace Hatdon.CardStacker
             {
                 var c = FindFirstObjectByType<CardStackerControls>();
                 Require(c != null && c.Hands.Length == 2, "Controls initialised");
+                c.Placement.PrepareTestPair();
                 var left = c.Hands[0]; var right = c.Hands[1];
                 Vector3 start = left.position, other = right.position;
                 Quaternion rotation = left.rotation, otherRotation = right.rotation;
