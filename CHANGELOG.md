@@ -1,5 +1,15 @@
 # Changelog
 
+## Lock, commit and physical balance — 2026-11-03
+
+- Added independent hand locks, reopen-to-adjust, two-lock commit and reset.
+- Commit releases both cards into gravity without changing their poses or adding an impulse; handles cannot move released cards.
+- Added paper/felt physics materials, 1.8g mass, 0.32mm thickness, physical box inertia, low damping and fine contact tolerances.
+- Added 240Hz simulation and per-card solver settings for thin-body contacts.
+- Corrected collision queries to use rigid-body poses instead of interpolated display transforms.
+- Verified overlap rejection, unsupported falls, API-assembled triangle, three lean angles, actual contacts and disturbance by an impulse.
+- Preserved the green felt visual surface at the physical tabletop height.
+
 ## Tabletop artwork — 2026-11-03
 
 - Added original ace-of-spades / seven-of-hearts faces and matching patterned backs.

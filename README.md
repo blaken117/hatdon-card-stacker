@@ -4,7 +4,7 @@ A Unity experiment about building structures from playing cards using two virtua
 
 ## Status
 
-Card movement and rotation prototype. Select either held card and use world-axis handles to position and rotate it, with fine adjustment and contact limits. Release and physical balancing are the next milestone; this is not a finished game.
+Lock-and-commit physics prototype. Position each card, lock each hand, then commit both to release them into gravity and contact physics. Two-card triangles have been verified after release; this is not a finished game.
 
 ## Open the project
 
@@ -24,11 +24,14 @@ The playing area now uses green felt on a walnut desktop, with a small reading l
 | --- | --- |
 | Hover over a card | Subtle blue outline |
 | Left-click a card | Select it; gold outline |
-| Left-click empty table / Esc | Deselect; both cards remain held |
-| Left / Right hand buttons | Switch selected held card |
+| Left-click empty table / Esc | Deselect without changing held/released state |
+| Left / Right hand buttons / Tab | Select hand; reopen its lock for adjustment |
 | W / Move button | Show X/Y/Z movement handles; drag an arrow |
 | E / Rotate button | Show X/Y/Z rotation rings; drag a ring |
 | Shift while dragging | One-tenth movement or rotation sensitivity |
+| L / Lock buttons | Lock a hand at its current pose; still held |
+| Enter / Commit both | Release both cards when both hands are locked |
+| R / Reset cards | Restore the starting held cards for another attempt |
 | Right-drag | Orbit selected card, or table centre |
 | Middle-drag | Pan |
 | Mouse wheel | Zoom within near/far limits |
@@ -38,17 +41,19 @@ The playing area now uses green felt on a walnut desktop, with a small reading l
 
 Selecting a card does not move the camera. The camera stays above the tabletop. Both hand slots currently start occupied. Adjusting one card keeps the other held in place. Position is shown in world millimetres and rotation in world Euler degrees. Red is X, green is Y (height), blue is Z. Choose a different camera view if an axis is viewed end-on.
 
-Moves and rotations stop when the card meets the table or other card. Contact is checked in small swept steps with a refined stopping point; cards do not push each other while both are held. This is a kinematic placement constraint, not a physical balance simulation. Picking up additional cards and releasing the held cards are not implemented yet.
+Moves and rotations stop when the card meets the table or other card. Contact is checked in small swept steps with a refined stopping point; cards do not push each other while held. Selecting a locked hand reopens it; lock it again before committing. Both locks are required, and overlapping placements are rejected. Commit changes both bodies to dynamic in the same update without moving them or adding a release impulse. Released cards can be inspected but cannot be repositioned with handles. Reset to try again.
+
+The rigid-card model uses 63x88x0.32mm cards at 1.8g, 240Hz physics, finite paper/felt friction, zero bounce and low linear/angular damping. These are initial approximation/tuning values, not measured material calibration. Card flex, humidity, edge deformation and orientation-dependent aerodynamics are not simulated. No joints, frozen constraints, automatic balance or post-release pose corrections hold a structure up. Additional cards and individual release remain future work.
 
 ## Intended interaction
 
 - Move and rotate one card precisely, including fine adjustment.
 - Keep up to two cards held, one per virtual hand.
 - Switch the active hand without releasing the other card.
-- Release either card, or both together, and let gravity/contact determine the result.
+- Lock each hand, then release both together and let gravity/contact determine the result.
 - Orbit the camera and inspect alignment from different sides.
 
-Start by proving a stable two-card tent, then add more cards. Rigid cards are the initial approximation; card flex is outside the first prototype.
+Two-card tents at 24, 28 and 32 degrees from vertical stayed standing for 20 simulated seconds in regression tests. Both cards had real table/card contacts; unsupported tilted cards fell and an impulse could disturb the tent. The same 28-degree pose was assembled through the contact-aware placement API. Rigid cards remain the initial approximation; card flex is outside this prototype.
 
 ## Version history and dev logs
 

@@ -9,19 +9,22 @@ namespace Hatdon.CardStacker
         public Rigidbody[] Hands { get; private set; }
         public Vector3 Pivot { get; private set; }
         public CardManipulator Manipulator { get; private set; }
+        public CardPlacementSession Placement { get; private set; }
+        public bool CanManipulate => Selected!=null && Placement.CanAdjust(Selected);
         private Camera view;
         private Rigidbody hovered;
         private LineRenderer[] outlines;
         private Vector3 defaultPosition;
         private Quaternion defaultRotation;
         private bool orbiting, panning;
+        private int lastHandIndex=1;
         private Vector2 lastPointer;
         private Material outlineMaterial;
         private GUIStyle heading, text, muted, button;
-        private static readonly Rect Guide = new Rect(24, 24, 352, 412);
-        private static readonly Rect PosePanel = new Rect(24, 460, 380, 204);
+        private static readonly Rect Guide = new Rect(24, 24, 352, 492);
+        private static readonly Rect PosePanel = new Rect(24, 540, 380, 204);
         private static readonly Rect Views = new Rect(1476, 24, 420, 90);
-        private static readonly Rect HandPanel = new Rect(590, 954, 740, 102);
+        private static readonly Rect HandPanel = new Rect(460, 904, 1000, 152);
 #if HATDON_CAPTURE
         public bool CaptureMode { get; set; }
         public void CaptureHover(Vector2 point) { hovered = PickCard(point); }
@@ -44,6 +47,7 @@ namespace Hatdon.CardStacker
             Pivot = new Vector3(0, 0.04f, 0);
             Hands = FindObjectsByType<Rigidbody>(FindObjectsSortMode.None);
             System.Array.Sort(Hands, (a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
+            Placement=gameObject.AddComponent<CardPlacementSession>();Placement.Initialise(this);
             outlines = new LineRenderer[Hands.Length];
             outlineMaterial = new Material(Shader.Find("Sprites/Default"));
             for (int i = 0; i < Hands.Length; i++)
@@ -80,7 +84,11 @@ namespace Hatdon.CardStacker
         {
             if (Manipulator != null) Manipulator.EndDrag();
             Selected = System.Array.IndexOf(Hands, card) >= 0 ? card : null;
+            if(Selected!=null)lastHandIndex=System.Array.IndexOf(Hands,Selected);
+            if(Selected!=null) Placement.BeginAdjust(Selected);
         }
+
+        public void SwitchHand(){SelectCard(Hands[1-lastHandIndex]);}
 
         private void Update()
         {
@@ -97,6 +105,10 @@ namespace Hatdon.CardStacker
             if (Input.GetKeyDown(KeyCode.W)) Manipulator.SetTool(CardManipulator.Tool.Move);
             if (Input.GetKeyDown(KeyCode.E)) Manipulator.SetTool(CardManipulator.Tool.Rotate);
             if (Input.GetKeyDown(KeyCode.Escape)) SelectCard(null);
+            if (Input.GetKeyDown(KeyCode.L) && Selected!=null) Placement.LockHand(System.Array.IndexOf(Hands,Selected));
+            if (Input.GetKeyDown(KeyCode.Return)) Placement.CommitBoth();
+            if (Input.GetKeyDown(KeyCode.R)) Placement.ResetCards();
+            if (Input.GetKeyDown(KeyCode.Tab)) SwitchHand();
             if (Input.GetKeyDown(KeyCode.F)) FocusSelection();
             if (Input.GetKeyDown(KeyCode.Home)) ResetView();
             if (Input.GetMouseButtonDown(1) && !overUI && !Manipulator.Dragging)
@@ -211,7 +223,7 @@ namespace Hatdon.CardStacker
             GUI.matrix = Matrix4x4.Scale(new Vector3(Screen.width / 1920f, Screen.height / 1080f, 1));
             Panel(Guide); Panel(Views); Panel(HandPanel);
             GUI.Label(new Rect(42, 38, 310, 30), "CONTROLS", heading);
-            string[] rows = { "Left-click card   Select", "Left-click table   Deselect", "W   Move handles", "E   Rotation rings", "Drag a coloured handle to adjust", "Shift + drag   Fine adjustment", "Right-drag   Orbit camera", "Middle-drag   Pan camera", "Mouse wheel   Zoom", "F   Focus selected card", "Home   Reset camera", "Esc   Deselect" };
+            string[] rows = { "Left-click card   Select / adjust", "W   Move handles", "E   Rotation rings", "Drag a coloured handle to adjust", "Shift + drag   Fine adjustment", "L   Lock selected hand", "Tab   Switch hand", "Enter   Commit both locked hands", "R   Reset cards", "Right-drag   Orbit camera", "Middle-drag   Pan camera", "Mouse wheel   Zoom", "F   Focus selected card", "Home   Reset camera", "Esc / empty space   Deselect" };
             for (int i = 0; i < rows.Length; i++) GUI.Label(new Rect(42, 78 + i * 27, 315, 27), rows[i], text);
             GUI.Label(new Rect(1494, 34, 390, 25), "ALIGNMENT VIEWS", muted);
             if (GUI.Button(new Rect(1494, 66, 120, 34), "Front", button)) QuickView(0);
@@ -220,27 +232,38 @@ namespace Hatdon.CardStacker
             if (Selected != null)
             {
                 Panel(PosePanel);
-                GUI.Label(new Rect(42, 474, 340, 26), "ADJUST SELECTED CARD", heading);
+                GUI.Label(new Rect(42, 554, 340, 26), Placement.IsCommitted ? "INSPECT RELEASED CARD" : "ADJUST SELECTED CARD", heading);
+                GUI.enabled=CanManipulate;
                 GUI.backgroundColor = Manipulator.Mode == CardManipulator.Tool.Move ? new Color(1, .75f, .3f) : Color.white;
-                if (GUI.Button(new Rect(42, 510, 160, 34), "Move  W", button)) Manipulator.SetTool(CardManipulator.Tool.Move);
+                if (GUI.Button(new Rect(42, 590, 160, 34), "Move  W", button)) Manipulator.SetTool(CardManipulator.Tool.Move);
                 GUI.backgroundColor = Manipulator.Mode == CardManipulator.Tool.Rotate ? new Color(1, .75f, .3f) : Color.white;
-                if (GUI.Button(new Rect(212, 510, 170, 34), "Rotate  E", button)) Manipulator.SetTool(CardManipulator.Tool.Rotate);
+                if (GUI.Button(new Rect(212, 590, 170, 34), "Rotate  E", button)) Manipulator.SetTool(CardManipulator.Tool.Rotate);
+                GUI.enabled=true;
                 GUI.backgroundColor = Color.white;
                 Vector3 p = Selected.position * 1000, a = Selected.rotation.eulerAngles;
                 a = new Vector3(Mathf.DeltaAngle(0, a.x), Mathf.DeltaAngle(0, a.y), Mathf.DeltaAngle(0, a.z));
-                GUI.Label(new Rect(42, 558, 345, 26), $"mm   X {p.x:F1}   Y {p.y:F1}   Z {p.z:F1}", text);
-                GUI.Label(new Rect(42, 588, 345, 26), $"deg  X {a.x:F1}   Y {a.y:F1}   Z {a.z:F1}", text);
-                GUI.Label(new Rect(42, 628, 345, 26), Manipulator.ContactBlocked ? "Contact — adjustment limited" : Manipulator.FineAdjustment ? "Fine adjustment · 10% sensitivity" : "X red   ·   Y green   ·   Z blue", muted);
+                GUI.Label(new Rect(42, 638, 345, 26), $"mm   X {p.x:F1}   Y {p.y:F1}   Z {p.z:F1}", text);
+                GUI.Label(new Rect(42, 668, 345, 26), $"deg  X {a.x:F1}   Y {a.y:F1}   Z {a.z:F1}", text);
+                GUI.Label(new Rect(42, 708, 345, 26), Placement.IsCommitted ? "Released · 1.8 g · gravity active" : Manipulator.ContactBlocked ? "Contact — adjustment limited" : Manipulator.FineAdjustment ? "Fine adjustment · 10% sensitivity" : "X red   ·   Y green   ·   Z blue", muted);
                 Manipulator.DrawAxisLabels(heading);
             }
-            GUI.Label(new Rect(610, 966, 700, 25), Selected == null ? "No card selected — click a card or choose a hand" : "Selected: " + (Selected == Hands[0] ? "left-hand card" : "right-hand card"), text);
+            GUI.Label(new Rect(480, 916, 960, 26),Placement.Status,text);
             for (int i = 0; i < Mathf.Min(2, Hands.Length); i++)
             {
                 GUI.backgroundColor = Selected == Hands[i] ? new Color(1, 0.75f, 0.3f) : Color.white;
-                if (GUI.Button(new Rect(610 + i * 350, 1002, 330, 36), (i == 0 ? "LEFT HAND" : "RIGHT HAND") + "  ·  Holding card", button)) SelectCard(Hands[i]);
+                string state=Placement.IsCommitted ? "Released" : Placement.IsLocked(i) ? "Locked" : "Adjust";
+                if (GUI.Button(new Rect(480+i*365, 950, 225, 36), (i == 0 ? "LEFT" : "RIGHT")+" · "+state,button)) SelectCard(Hands[i]);
+                GUI.backgroundColor=Color.white;GUI.enabled=!Placement.IsCommitted && !Placement.IsLocked(i);
+                if(GUI.Button(new Rect(715+i*365,950,110,36),"Lock",button)) Placement.LockHand(i);
+                GUI.enabled=true;
             }
             GUI.backgroundColor = Color.white;
-            GUI.Label(new Rect(24, 1000, 530, 55), "Drag a handle to adjust the selected card.\nBoth hands keep holding; release comes next.", muted);
+            GUI.enabled=Placement.BothLocked;
+            if(GUI.Button(new Rect(1210,950,230,36),Placement.IsCommitted ? "Physics running" : "Commit both · Enter",button)) Placement.CommitBoth();
+            GUI.enabled=true;
+            if(GUI.Button(new Rect(480,1003,210,32),"Reset cards · R",button)) Placement.ResetCards();
+            GUI.Label(new Rect(715,1006,725,30),Placement.IsCommitted ? "Inspect the result. Reset to try a new placement." : "Locked hands stay held. Selecting a hand reopens it for adjustment.",muted);
+            GUI.Label(new Rect(24, 1000, 410, 55), "Lock each hand when ready.\nCommit both to test the balance.", muted);
             GUI.matrix = old;
         }
 
@@ -260,6 +283,9 @@ namespace Hatdon.CardStacker
 
         private void OnApplicationFocus(bool focused)
         {
+#if HATDON_CAPTURE
+            if(CaptureMode)return;
+#endif
             if (!focused)
             {
                 orbiting = panning = false;

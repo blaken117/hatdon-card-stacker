@@ -10,6 +10,9 @@ namespace Hatdon.CardStacker
         public bool ContactBlocked { get; private set; }
         public bool FineAdjustment { get; private set; }
         public int ActiveAxis { get; private set; } = -1;
+#if HATDON_CAPTURE
+        public Vector3 CaptureRotationRadial => rotationRadial;
+#endif
         private CardStackerControls controls;
         private Camera view;
         private Collider[] obstacles;
@@ -59,7 +62,7 @@ namespace Hatdon.CardStacker
 
         public bool BeginDrag(Vector2 pointer)
         {
-            if (controls.Selected == null) return false;
+            if (!controls.CanManipulate) return false;
             float best = 12 * Screen.height / 1080f;
             int found = -1; Vector3 radial = Vector3.zero;
             float size = HandleSize;
@@ -88,7 +91,7 @@ namespace Hatdon.CardStacker
 
         public void DragTo(Vector2 pointer, bool fine)
         {
-            if (!Dragging || controls.Selected == null) return;
+            if (!Dragging || !controls.CanManipulate) return;
             FineAdjustment = fine;
             Vector2 delta = pointer - previousPointer; previousPointer = pointer;
             float precision = fine ? .1f : 1;
@@ -117,7 +120,7 @@ namespace Hatdon.CardStacker
 
         public bool Translate(Vector3 delta)
         {
-            if (controls.Selected == null) return false;
+            if (!controls.CanManipulate) return false;
             Vector3 target = controls.Selected.position + Vector3.ClampMagnitude(delta, .12f);
             target.x = Mathf.Clamp(target.x, -.36f, .36f);
             target.z = Mathf.Clamp(target.z, -.26f, .26f);
@@ -127,7 +130,7 @@ namespace Hatdon.CardStacker
 
         public bool Rotate(Vector3 axis, float degrees)
         {
-            if (controls.Selected == null || axis.sqrMagnitude < .1f) return false;
+            if (!controls.CanManipulate || axis.sqrMagnitude < .1f) return false;
             return ApplyPose(controls.Selected.position, Quaternion.AngleAxis(Mathf.Clamp(degrees, -90, 90), axis.normalized) * controls.Selected.rotation);
         }
 
@@ -137,7 +140,7 @@ namespace Hatdon.CardStacker
             foreach (var other in obstacles)
             {
                 if (other == null || other == card || !other.enabled || other.isTrigger || !other.gameObject.activeInHierarchy) continue;
-                if (Physics.ComputePenetration(card, position, rotation, other, other.transform.position, other.transform.rotation,
+                if (Physics.ComputePenetration(card, position, rotation, other, CardPlacementSession.ColliderPosition(other), CardPlacementSession.ColliderRotation(other),
                     out _, out float depth) && depth > .000001f) return false;
             }
             return true;
@@ -176,10 +179,10 @@ namespace Hatdon.CardStacker
         {
             if (controls == null || lines == null) return;
             if (Time.unscaledTime > contactUntil) ContactBlocked = false;
-            if (controls.Selected == null) EndDrag();
+            if (!controls.CanManipulate) EndDrag();
             for (int i = 0; i < 3; i++)
             {
-                var line = lines[i]; line.enabled = controls.Selected != null;
+                var line = lines[i]; line.enabled = controls.CanManipulate;
                 if (!line.enabled) continue;
                 float size = HandleSize;
                 line.widthMultiplier = size * (ActiveAxis == i ? .035f : .021f);
@@ -204,7 +207,7 @@ namespace Hatdon.CardStacker
 
         public void DrawAxisLabels(GUIStyle style)
         {
-            if (controls.Selected == null || Mode != Tool.Move) return;
+            if (!controls.CanManipulate || Mode != Tool.Move) return;
             for (int i = 0; i < 3; i++)
             {
                 Vector3 p = view.WorldToScreenPoint(controls.Selected.position + axes[i] * HandleSize * 1.12f);

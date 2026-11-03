@@ -49,6 +49,8 @@ namespace Hatdon.CardStacker
             if (naturalTake) { milestone = 2; frames = 780; }
             artTake = Array.IndexOf(arguments, "-recordArtTake") >= 0;
             if (artTake) { naturalTake = true; frames = 720; }
+            physicsTake=Array.IndexOf(arguments,"-recordPhysicsTake")>=0;
+            if(physicsTake){naturalTake=true;frames=900;}
             controls.SelectCard(null);
             controls.ResetView();
             Time.captureFramerate = Fps;
@@ -70,7 +72,8 @@ namespace Hatdon.CardStacker
             var endOfFrame = new WaitForEndOfFrame();
             for (int frame = 0; frame < frames; frame++)
             {
-                if (artTake) DemonstrateArt(frame);
+                if (physicsTake) DemonstratePhysics(frame);
+                else if (artTake) DemonstrateArt(frame);
                 else if (naturalTake) DemonstrateNatural(frame);
                 else if (milestone == 1) Demonstrate(frame); else DemonstrateMovement(frame);
                 yield return endOfFrame;
@@ -89,6 +92,8 @@ namespace Hatdon.CardStacker
             }
             encoder.StandardInput.Close();
             encoder.WaitForExit();
+            if(physicsTake && !PhysicsTakeStanding())
+            { UnityEngine.Debug.LogError("Released triangle did not remain standing in the recording.");Application.Quit(7);yield break; }
             if (encoder.ExitCode != 0) { UnityEngine.Debug.LogError(encoderErrors.Result); Application.Quit(4); }
             else { UnityEngine.Debug.Log("HATDON_CAPTURE_OK: " + frames + " frames, " + (frames / Fps) + " seconds, 1920x1080 at 30fps."); Application.Quit(0); }
         }

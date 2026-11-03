@@ -1,5 +1,19 @@
 # Development record
 
+## 2026-11-03 — Prototype 004: hand locks, commit and physical cards
+
+User requested locking each hand, switching back to adjust either locked card, a final joint commit into physics, and a test with two leaning cards forming a triangle. Each lock retains its kinematic hold. Selecting that hand reopens its lock. Both must be locked to commit. The commit rejects material overlap, ends manipulation, and switches both rigid bodies to dynamic before the next physics step, with zero release velocity and no pose correction. After commit, selection is inspection only; Reset restores the initial held poses.
+
+Runtime physics: card size 63x88x0.32mm, mass 0.0018kg, gravity 9.81m/s², 240Hz step, 64 position / 16 velocity iterations per body, physically dimensioned box inertia, 25µm collider contact offsets and a 0.12m/s depenetration-speed cap. Paper static/dynamic friction is 0.48/0.32; felt is 0.70/0.52, combined by Average. Bounce is zero. Linear/angular damping is 0.04/0.08 and sleeping uses a small energy threshold. These are initial plausible rigid-body tuning values, not measured card-stock calibration. There is no flex, humidity, deformation, air-lift or orientation-dependent aerodynamic model. The existing rounded visuals still use rectangular box collision geometry.
+
+A release validation test exposed interpolation-related stale-transform queries. Both held movement and pre-commit overlap checks now use root rigid-body positions/rotations, so overlap is evaluated in physics space. The original hidden table renderer no longer covers the felt; the visible mat is just beneath the collider surface so thin resting cards remain visible.
+
+Validation: unsupported tilted cards fall flat without tunnelling; gravity acceleration is checked; overlaps refuse release; hand locks can be reopened; reset works; no release teleport/impulse is introduced. A triangle assembled through the actual placement API remained standing after commit for 20 simulated seconds. Separate 24/28/32-degree fixtures survived 20 seconds, with maximum centre drift 0.0121/0.0153/0.0380mm and table/other-card contacts on both bodies. No joints, frozen constraints or kinematic support were present after release. A 0.0002Ns impulse at an offset disturbed each structure. Movement and selection/camera regressions also passed.
+
+The capture helper assembles the 28-degree triangle through actual screen-picked BeginDrag/DragTo calls, locks each hand, commits both, then leaves the bodies to simulate for 13 seconds while orbiting for inspection. The helper never assigns a card pose. Its calculated targets are for the automated demonstration only; the playable game has no triangle snap or auto-balance function.
+
+Unity API references used for configuration: https://docs.unity.com/en-us/engine/6000.0/script-reference/unityengine/rigidbody and https://docs.unity.com/en-us/engine/6000.0/manual/physics-section/physics-overview/collision-section/collider-surfaces/class-physics-material . Actual stability claims above are from the local engine tests, not these API references.
+
 ## 2026-11-03 — Prototype 003: tabletop artwork
 
 User requested more character in the table/environment and actual playing-card textures. Added five original baked textures: ace of spades, seven of hearts, a symmetric navy patterned back, felt and walnut grain. The deterministic Pillow/NumPy generator is included under Tools. It rasterises lettering from the locally installed Georgia Bold font; no font files, branded deck scans or paid art assets are included.

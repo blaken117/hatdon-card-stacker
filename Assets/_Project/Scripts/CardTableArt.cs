@@ -108,8 +108,9 @@ namespace Hatdon.CardStacker
             var front7 = Surface("Seven of hearts", "#ffffff", "seven-hearts", .10f);
             var table = GameObject.Find("Table");
             table.GetComponent<Renderer>().sharedMaterial = wood;
+            table.GetComponent<Renderer>().enabled=false; // Keep its collider; the dressed desktop and felt render the surface.
             Shape("Walnut desktop",PrimitiveType.Cube,new Vector3(0,-.024f,0),new Vector3(.94f,.044f,.82f),wood);
-            Shape("Felt playing surface",PrimitiveType.Cube,new Vector3(0,-.0004f,0),new Vector3(.799f,.001f,.599f),felt);
+            Shape("Felt playing surface",PrimitiveType.Cube,new Vector3(0,-.000505f,0),new Vector3(.799f,.001f,.599f),felt);
             Shape("Desktop bevel / apron",PrimitiveType.Cube,new Vector3(0,-.052f,0),new Vector3(.91f,.025f,.79f),wood);
             var thread = Surface("Felt stitch", "#829878",null,.02f);
             // Small individual stitches keep the playing boundary understated.

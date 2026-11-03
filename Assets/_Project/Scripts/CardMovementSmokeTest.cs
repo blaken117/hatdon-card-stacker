@@ -62,7 +62,8 @@ namespace Hatdon.CardStacker
                 Require(left.position.x < -.0179f, "Card cannot pass through other card");
                 Pose(left, new Vector3(other.x, start.y, -.02f), rotation);
                 Require(!m.Translate(Vector3.forward * .04f), "Thin-face crossing is swept, not just checked at endpoint");
-                Require(left.position.z < -.00079f, "Thin faces do not tunnel");
+                float combinedThickness=(left.transform.localScale.z+right.transform.localScale.z)*.5f;
+                Require(left.position.z < -combinedThickness+.000002f, "Thin faces do not tunnel");
                 Pose(left, new Vector3(start.x, .05f, start.z), rotation);
                 Require(!m.Rotate(Vector3.forward, 45), "Table blocks rotating corner");
                 Require(Quaternion.Angle(rotation, left.rotation) < 44.9f, "Rotation stops before penetrating table");
