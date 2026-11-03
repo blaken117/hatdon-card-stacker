@@ -52,6 +52,7 @@ namespace Hatdon.CardStacker
             }
             int delay=mouseContact ? 200 : 0;
             OrientMouse(frame,450+delay,Quaternion.AngleAxis(mouseLean,Vector3.forward)*Quaternion.AngleAxis(-90,Vector3.up));
+            if(frame==588+delay)controls.Zoom(-6);
             Vector3 staging=new Vector3(x,.10f,0);
             PositionMouse(frame,590+delay,30,staging,true);
             PositionMouse(frame,630+delay,40,staging,false);
