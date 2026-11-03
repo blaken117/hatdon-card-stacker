@@ -1,5 +1,11 @@
 # Changelog
 
+## Recording revision — 2026-11-03
+
+- Added a faster 26-second automated demonstration with visible cursor drags, varied timing, pauses and corrections.
+- Card manipulation uses the real screen-handle drag path; gameplay is unchanged.
+- Preserved the earlier 45-second take and its build/source archive.
+
 ## Card manipulation — 2026-10-27
 
 - Added draggable world-axis movement arrows (W) and rotation rings (E).

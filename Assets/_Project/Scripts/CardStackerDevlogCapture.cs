@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Hatdon.CardStacker
 {
     // An opt-in, deterministic demonstration of the actual gameplay controls.
-    public sealed class CardStackerDevlogCapture : MonoBehaviour
+    public sealed partial class CardStackerDevlogCapture : MonoBehaviour
     {
         private const int Fps = 30;
         private int frames = 1260, milestone = 1;
@@ -45,6 +45,8 @@ namespace Hatdon.CardStacker
             int milestoneOption = Array.IndexOf(arguments, "-recordMilestone");
             if (milestoneOption >= 0 && milestoneOption + 1 < arguments.Length && arguments[milestoneOption + 1] == "2")
             { milestone = 2; frames = 1350; }
+            naturalTake = Array.IndexOf(arguments, "-naturalTake") >= 0;
+            if (naturalTake) { milestone = 2; frames = 780; }
             controls.SelectCard(null);
             controls.ResetView();
             Time.captureFramerate = Fps;
@@ -66,7 +68,8 @@ namespace Hatdon.CardStacker
             var endOfFrame = new WaitForEndOfFrame();
             for (int frame = 0; frame < frames; frame++)
             {
-                if (milestone == 1) Demonstrate(frame); else DemonstrateMovement(frame);
+                if (naturalTake) DemonstrateNatural(frame);
+                else if (milestone == 1) Demonstrate(frame); else DemonstrateMovement(frame);
                 yield return endOfFrame;
                 bool failed = false;
                 Texture2D image = null;
@@ -149,6 +152,7 @@ namespace Hatdon.CardStacker
         private void OnGUI()
         {
             if (!showPointer) return;
+            if (naturalTake) { DrawNaturalCursor(); return; }
             Color old = GUI.color;
             GUI.color = Color.white;
             GUI.DrawTexture(new Rect(pointer.x - 3, Screen.height - pointer.y - 3, 6, 6), Texture2D.whiteTexture);
@@ -159,6 +163,7 @@ namespace Hatdon.CardStacker
         {
             Time.captureFramerate = 0;
             if (encoder != null) encoder.Dispose();
+            if (naturalCursor != null) Destroy(naturalCursor);
         }
     }
 }

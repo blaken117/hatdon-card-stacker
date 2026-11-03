@@ -1,5 +1,11 @@
 # Development record
 
+## 2026-11-03 — Faster, more natural demonstration take
+
+The user requested a new testing recording with faster pacing and more human-like control. Prototype 002 Take 02 uses a 26-second scripted sequence with a visible arrow cursor, eased approach/drag speeds, short inspection pauses, a small rotation correction, fine adjustment, hand switching, contact testing and a brief orbit. All card adjustments run through screen-picked handles and the actual `BeginDrag`/`DragTo` path. The script does not directly change card poses or bypass contact checks.
+
+This is an automated demonstration styled to resemble normal play, not a recording of a human tester. Gameplay is unchanged. Take 01, its source tag and its build remain untouched. New take/build/source/cue/checksum records live in `DevLogs/Card-Stacker/prototypes/002-card-manipulation/take02/`. Activate it only with `HATDON_CAPTURE`, `-recordDevlog` and `-naturalTake`.
+
 ## 2026-10-27 — Prototype 002: card movement and rotation
 
 User approved adding precise movement and rotation of the selected card, Shift fine adjustment, live position/angle feedback and contact checks. The two existing hands remain occupied and held; releasing is intentionally a later milestone.
