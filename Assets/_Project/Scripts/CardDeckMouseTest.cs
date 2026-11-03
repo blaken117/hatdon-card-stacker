@@ -50,12 +50,18 @@ namespace Hatdon.CardStacker
                 Pose(first,position,rotation);
                 m.SetTool(CardManipulator.Tool.Roll);m.BeginPointerDrag(centre);m.DragPointerTo(centre+Vector2.right*30,false);m.EndDrag();
                 Require(Quaternion.Angle(rotation,first.rotation)>5 && first.position==position,"T twist preserves card centre");
-                Pose(first,position,rotation);s.LockHand(0);
+                Pose(first,position,rotation);s.LockHand(0);c.HandVisuals.Refresh();
+                Require(c.HandVisuals.VisibleCount==1,"Lock shows one ghost hand");
+                c.SelectCard(first);c.HandVisuals.Refresh();
+                Require(c.HandVisuals.VisibleCount==0,"Reopening a lock hides its ghost hand");s.LockHand(0);
 
                 c.ResetView();var second=c.Deck.Draw();Require(second!=null && second!=first && s.HasCard(1) && c.Deck.Remaining==50,"Second draw uses the other free hand");
                 Pose(second,new Vector3(.1f,.06f,0),Quaternion.Euler(-90,0,0));
                 int count=c.AllCards.Count;Require(c.Deck.Draw()==null && c.AllCards.Count==count && c.Deck.Remaining==50,"Full hands cannot consume another card");
-                c.SelectCard(second);s.LockHand(1);Require(s.CommitBoth(),"Drawn pair commits normally");
+                c.SelectCard(second);s.LockHand(1);c.HandVisuals.Refresh();
+                Require(c.HandVisuals.VisibleCount==2,"Both locks show both ghost hands");
+                Require(s.CommitBoth(),"Drawn pair commits normally");c.HandVisuals.Refresh();
+                Require(c.HandVisuals.VisibleCount==0,"Release removes all ghost hands");
                 Require(!s.HasCard(0) && !s.HasCard(1) && !first.isKinematic && !second.isKinematic,"Commit frees both hands and leaves both cards dynamic");
                 c.ActivateHand(0);var third=c.Deck.Draw();
                 Require(third!=null && third!=first && third!=second && c.Deck.Remaining==49,"A new card can be drawn after committing");

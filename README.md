@@ -44,6 +44,8 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 
 Selecting a card does not move the camera. The first drag from the deck pulls the card onto a horizontal plane 60mm above the tabletop. Subsequent W drags move across the camera view; use Q for depth. E uses a virtual trackball, while T gives a separate twist. Shift reduces sensitivity to one tenth. Position readouts use world millimetres and rotation uses world Euler degrees. Two hands can be occupied at once; selecting a locked hand reopens it.
 
+Locking a card shows a faint cartoon ghost hand: a palm, finger and thumb gripping its long edges. The fill is almost transparent with a soft rim, keeping the card readable. These are visual indicators with no colliders, shadows, joints or forces. Unlocking or committing removes them.
+
 Moves and rotations stop at physical surfaces and other cards, including earlier placed cards. Contact uses small swept steps with a refined stopping point. Both occupied hands must be locked, and overlapping placements refuse commit. Commit changes both bodies to dynamic without moving them or adding a release impulse, then frees the hands for the next draws. Released cards remain simulated and inspectable; mouse adjustment applies only to held cards. Reset clears the table.
 
 The locked-card check is explicitly tested: dragging the other card through it stops the moving card and leaves the locked pose unchanged. A separate failed-placement test offsets the second card in depth so their upper edges miss; after commit, both fall flat through gravity without an added push. The successful aligned triangle and failed placement use the same physics settings.

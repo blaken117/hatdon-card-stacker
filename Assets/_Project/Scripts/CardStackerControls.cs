@@ -12,6 +12,7 @@ namespace Hatdon.CardStacker
         public CardManipulator Manipulator { get; private set; }
         public CardPlacementSession Placement { get; private set; }
         public CardDeck Deck { get; private set; }
+        public CardHandVisuals HandVisuals { get; private set; }
         public int ActiveHand=>lastHandIndex;
         public List<Rigidbody> AllCards { get; }=new List<Rigidbody>();
         public bool CanManipulate => Selected!=null && Placement.CanAdjust(Selected);
@@ -58,6 +59,7 @@ namespace Hatdon.CardStacker
             Deck=gameObject.AddComponent<CardDeck>();Deck.Initialise(this);
             Manipulator = gameObject.AddComponent<CardManipulator>();
             Manipulator.Initialise(this);
+            HandVisuals=gameObject.AddComponent<CardHandVisuals>();HandVisuals.Initialise(this);
         }
 
         public void RegisterCard(Rigidbody card)

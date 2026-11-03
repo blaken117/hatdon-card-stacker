@@ -22,7 +22,10 @@ namespace Hatdon.CardStacker
         private static void StartIfRequested()
         {
             if (Array.IndexOf(Environment.GetCommandLineArgs(), "-recordDevlog") >= 0)
+            {
+                Application.runInBackground = true;
                 new GameObject("Devlog capture").AddComponent<CardStackerDevlogCapture>();
+            }
         }
 
         private static string Argument(string name)
@@ -54,13 +57,22 @@ namespace Hatdon.CardStacker
             fallTake=Array.IndexOf(arguments,"-recordFallTake")>=0;
             if(fallTake){physicsTake=true;naturalTake=true;frames=840;}
             deckTake=Array.IndexOf(arguments,"-recordDeckTake")>=0;
-            if(deckTake){naturalTake=true;frames=900;}
-            else controls.Placement.PrepareTestPair();
+            int leanOption=Array.IndexOf(arguments,"-recordMouseLean");
+            mouseTrials=leanOption>=0 || Array.IndexOf(arguments,"-recordMouseContact")>=0;
+            mouseContact=Array.IndexOf(arguments,"-recordMouseContact")>=0;
+            validateMouseOnly=Array.IndexOf(arguments,"-validateMouseTake")>=0;
+            if(mouseTrials)
+            {
+                mouseLean=leanOption>=0 ? float.Parse(arguments[leanOption+1],System.Globalization.CultureInfo.InvariantCulture) : 28;
+                naturalTake=true;frames=mouseContact ? 1600 : 1240;
+            }
+            else if(deckTake){naturalTake=true;frames=900;}
+            if(!deckTake && !mouseTrials)controls.Placement.PrepareTestPair();
             controls.SelectCard(null);
             controls.ResetView();
             Time.captureFramerate = Fps;
             QualitySettings.vSyncCount = 0;
-            try
+            if(!validateMouseOnly)try
             {
                 string output = Path.GetFullPath(Argument("-videoOutput"));
                 Directory.CreateDirectory(Path.GetDirectoryName(output));
@@ -77,12 +89,14 @@ namespace Hatdon.CardStacker
             var endOfFrame = new WaitForEndOfFrame();
             for (int frame = 0; frame < frames; frame++)
             {
-                if (deckTake) DemonstrateDeck(frame);
+                if (mouseTrials) DemonstrateMouseTrials(frame);
+                else if (deckTake) DemonstrateDeck(frame);
                 else if (physicsTake) DemonstratePhysics(frame);
                 else if (artTake) DemonstrateArt(frame);
                 else if (naturalTake) DemonstrateNatural(frame);
                 else if (milestone == 1) Demonstrate(frame); else DemonstrateMovement(frame);
                 yield return endOfFrame;
+                if(validateMouseOnly)continue;
                 bool failed = false;
                 Texture2D image = null;
                 try
@@ -96,6 +110,8 @@ namespace Hatdon.CardStacker
                 if (failed) { encoder.StandardInput.Close(); Application.Quit(3); yield break; }
                 if (frame % 180 == 0) UnityEngine.Debug.Log("HATDON_CAPTURE_FRAME " + frame + "/" + frames);
             }
+            if(mouseTrials && !MouseTrialsValid()){Application.Quit(21);yield break;}
+            if(validateMouseOnly){UnityEngine.Debug.Log("HATDON_MOUSE_VALIDATION_OK");Application.Quit(0);yield break;}
             encoder.StandardInput.Close();
             encoder.WaitForExit();
             if(deckTake && !DeckTakeValid()){UnityEngine.Debug.LogError("Deck demonstration final state is invalid.");Application.Quit(12);yield break;}

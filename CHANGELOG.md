@@ -1,5 +1,12 @@
 # Changelog
 
+## Ghost hands and mouse-control recordings — 2026-11-03
+
+- Show a faint cartoon finger/thumb grip only while each hand is locked; hide it on unlock, release or reset.
+- Use transparent fill and soft rims with no shadows or physics components.
+- Add opt-in captures that draw from the deck, assemble leaning cards with the actual W/Q/E/T pointer paths, and test tabletop and locked-card contact stops.
+- Keep all physical card settings and player manipulation behavior unchanged.
+
 ## Deck and mouse controls — 2026-11-03
 
 - Start with an empty table and a 52-card deck; drag one card into each free hand.
