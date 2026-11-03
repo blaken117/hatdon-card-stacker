@@ -5,11 +5,47 @@ namespace Hatdon.CardStacker
 {
     public sealed partial class CardStackerDevlogCapture
     {
-        private bool naturalTake, naturalDragging;
+        private bool naturalTake, naturalDragging, artTake;
         private Texture2D naturalCursor;
         private Vector2 gestureFrom, gestureClick, gestureStart;
         private Vector3 gestureCenter, gestureRadial;
         private static readonly Vector3[] CaptureAxes = { Vector3.right, Vector3.up, Vector3.forward };
+
+        private void DemonstrateArt(int frame)
+        {
+            showPointer = true;
+            if (frame == 0) pointer = new Vector2(1220,330);
+            if (frame < 60)
+            {
+                Vector2 target = Camera.main.WorldToScreenPoint(controls.Hands[0].worldCenterOfMass);
+                pointer = Vector2.Lerp(new Vector2(1220,330),target,Ease(frame/59f));
+                controls.CaptureHover(pointer);
+            }
+            if (frame == 60) { controls.SelectCard(controls.PickCard(pointer)); controls.CaptureHover(Vector2.zero); }
+            if (frame == 75) controls.FocusSelection();
+            if (frame == 90) { controls.BeginOrbit(); gestureFrom=pointer; naturalDragging=true; }
+            if (frame >= 90 && frame < 135)
+            {
+                Vector2 next=gestureFrom+new Vector2(60,8)*Ease((frame-90)/44f);
+                controls.Orbit(next-pointer);pointer=next;
+            }
+            if (frame == 135) naturalDragging=false;
+            Gesture(frame,156,110,1,180,true,false);
+            Gesture(frame,300,85,1,-180,true,false);
+            if (frame == 400) gestureFrom=pointer;
+            if (frame >= 400 && frame < 425) pointer=Vector2.Lerp(gestureFrom,new Vector2(1120,60),Ease((frame-400)/24f));
+            if (frame == 425) { controls.SelectCard(controls.Hands[1]); controls.FocusSelection(); }
+            Gesture(frame,440,60,1,.012f,false,false);
+            Gesture(frame,515,65,2,12,true,false);
+            if (frame == 600) { controls.SelectCard(null);controls.ResetView(); }
+            if (frame == 610) { controls.BeginOrbit();gestureFrom=pointer;naturalDragging=true; }
+            if (frame >= 610 && frame < 675)
+            {
+                Vector2 next=gestureFrom+new Vector2(80,-12)*Ease((frame-610)/64f);
+                controls.Orbit(next-pointer);pointer=next;
+            }
+            if (frame == 675) naturalDragging=false;
+        }
 
         private void DemonstrateNatural(int frame)
         {

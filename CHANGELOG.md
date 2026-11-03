@@ -1,5 +1,13 @@
 # Changelog
 
+## Tabletop artwork — 2026-11-03
+
+- Added original ace-of-spades / seven-of-hearts faces and matching patterned backs.
+- Added rounded visual card geometry and paper edges; box colliders remain unchanged.
+- Added felt, walnut grain, stitching, warm lamp, spare deck, plant and room dressing.
+- Kept selection, camera, manipulation, mass and contact behavior unchanged.
+- Added an art demonstration showing both face and back textures.
+
 ## Recording revision — 2026-11-03
 
 - Added a faster 26-second automated demonstration with visible cursor drags, varied timing, pauses and corrections.

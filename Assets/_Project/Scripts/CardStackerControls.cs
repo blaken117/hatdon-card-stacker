@@ -37,6 +37,7 @@ namespace Hatdon.CardStacker
 
         private void Awake()
         {
+            CardTableArt.Apply();
             view = GetComponent<Camera>();
             defaultPosition = transform.position;
             defaultRotation = transform.rotation;

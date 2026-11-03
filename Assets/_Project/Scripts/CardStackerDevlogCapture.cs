@@ -47,6 +47,8 @@ namespace Hatdon.CardStacker
             { milestone = 2; frames = 1350; }
             naturalTake = Array.IndexOf(arguments, "-naturalTake") >= 0;
             if (naturalTake) { milestone = 2; frames = 780; }
+            artTake = Array.IndexOf(arguments, "-recordArtTake") >= 0;
+            if (artTake) { naturalTake = true; frames = 720; }
             controls.SelectCard(null);
             controls.ResetView();
             Time.captureFramerate = Fps;
@@ -68,7 +70,8 @@ namespace Hatdon.CardStacker
             var endOfFrame = new WaitForEndOfFrame();
             for (int frame = 0; frame < frames; frame++)
             {
-                if (naturalTake) DemonstrateNatural(frame);
+                if (artTake) DemonstrateArt(frame);
+                else if (naturalTake) DemonstrateNatural(frame);
                 else if (milestone == 1) Demonstrate(frame); else DemonstrateMovement(frame);
                 yield return endOfFrame;
                 bool failed = false;

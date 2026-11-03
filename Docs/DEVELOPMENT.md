@@ -1,5 +1,15 @@
 # Development record
 
+## 2026-11-03 — Prototype 003: tabletop artwork
+
+User requested more character in the table/environment and actual playing-card textures. Added five original baked textures: ace of spades, seven of hearts, a symmetric navy patterned back, felt and walnut grain. The deterministic Pillow/NumPy generator is included under Tools. It rasterises lettering from the locally installed Georgia Bold font; no font files, branded deck scans or paid art assets are included.
+
+`CardTableArt` applies the visuals on Play before control initialisation. Cards receive rounded render geometry, separate face/back print surfaces, and paper-coloured edges. Their existing box colliders, dimensions, rigid bodies, masses and poses are preserved. The rounded visual corners are cosmetic; collision remains the existing rectangle approximation. Environment dressing creates meshes and lights only, with no colliders or rigid bodies, so selection rays and held-card contact tests retain their existing physics objects.
+
+The scene uses a green felt mat with stitched margins on walnut, a small warm reading lamp, decorative spare deck, potted plant, table legs, floor, walls and a quiet framed print. The lamp and ambient/window lighting keep attention on the playing area. Existing HUD and camera controls remain. The art capture turns a held card around using the real rotation-ring drag path to show its back, then returns it to its face.
+
+Selection/camera and card-movement regression checks passed in a graphics-enabled Windows development player. Art does not implement release or balance. Preserve the source/build and new visual take under `DevLogs/Card-Stacker/prototypes/003-tabletop-art/`.
+
 ## 2026-11-03 — Faster, more natural demonstration take
 
 The user requested a new testing recording with faster pacing and more human-like control. Prototype 002 Take 02 uses a 26-second scripted sequence with a visible arrow cursor, eased approach/drag speeds, short inspection pauses, a small rotation correction, fine adjustment, hand switching, contact testing and a brief orbit. All card adjustments run through screen-picked handles and the actual `BeginDrag`/`DragTo` path. The script does not directly change card poses or bypass contact checks.
