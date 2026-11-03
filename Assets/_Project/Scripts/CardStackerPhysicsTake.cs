@@ -6,6 +6,8 @@ namespace Hatdon.CardStacker
     public sealed partial class CardStackerDevlogCapture
     {
         private bool physicsTake;
+        private bool fallTake;
+        private Vector3 lockedCardReference;
         private Vector3 placementStart;
         private Quaternion placementRotation;
         private Vector3[] releasedPositions;
@@ -16,6 +18,7 @@ namespace Hatdon.CardStacker
             float a=28*Mathf.Deg2Rad,h=controls.Hands[0].transform.localScale.y,t=controls.Hands[0].transform.localScale.z;
             float x=(h*Mathf.Sin(a)+t*Mathf.Cos(a))*.5f;
             float y=(h*Mathf.Cos(a)+t*Mathf.Sin(a))*.5f+.000005f;
+            int afterPlacement=fallTake ? 120 : 0;
             if(frame==0){pointer=new Vector2(1200,300);gestureFrom=pointer;}
             if(frame<20)pointer=Vector2.Lerp(gestureFrom,(Vector2)Camera.main.WorldToScreenPoint(controls.Hands[0].worldCenterOfMass),Ease(frame/19f));
             if(frame==20)controls.SelectCard(controls.PickCard(pointer));
@@ -26,7 +29,7 @@ namespace Hatdon.CardStacker
             PlacementGesture(frame,190,35,1,y,false);
             if(frame==226)gestureFrom=pointer;
             if(frame>=226 && frame<240)pointer=Vector2.Lerp(gestureFrom,new Vector2(770,112),Ease((frame-226)/13f));
-            if(frame==240)controls.Placement.LockHand(0);
+            if(frame==240){controls.Placement.LockHand(0);lockedCardReference=controls.Hands[0].position;}
             if(frame==250)gestureFrom=pointer;
             if(frame>=250 && frame<265)pointer=Vector2.Lerp(gestureFrom,new Vector2(955,112),Ease((frame-250)/14f));
             if(frame==265){controls.SelectCard(controls.Hands[1]);controls.FocusSelection();}
@@ -34,27 +37,40 @@ namespace Hatdon.CardStacker
             PlacementGesture(frame,340,40,2,28,true);
             PlacementGesture(frame,390,32,0,x,false);
             PlacementGesture(frame,430,35,1,y,false);
-            if(frame==466)gestureFrom=pointer;
-            if(frame>=466 && frame<480)pointer=Vector2.Lerp(gestureFrom,new Vector2(1135,112),Ease((frame-466)/13f));
-            if(frame==480)controls.Placement.LockHand(1);
-            if(frame==490)gestureFrom=pointer;
-            if(frame>=490 && frame<510)pointer=Vector2.Lerp(gestureFrom,new Vector2(1325,112),Ease((frame-490)/19f));
-            if(frame==510)
+            if(fallTake)
+            {
+                PlacementGesture(frame,470,28,0,x-.012f,false);
+                if(frame==499)
+                {
+                    bool stopped=controls.Manipulator.ContactBlocked && controls.Hands[1].position.x>x-.00005f;
+                    bool held=controls.Placement.IsLocked(0) && Vector3.Distance(controls.Hands[0].position,lockedCardReference)<.000001f;
+                    if(!stopped || !held){Debug.LogError("Locked-card contact demonstration failed.");Application.Quit(11);}
+                    else Debug.Log("HATDON_LOCKED_CONTACT_OK: Drag stopped at the locked card; locked pose unchanged.");
+                }
+                PlacementGesture(frame,516,20,0,x,false);
+                PlacementGesture(frame,540,35,2,.068f,false);
+            }
+            if(frame==466+afterPlacement)gestureFrom=pointer;
+            if(frame>=466+afterPlacement && frame<480+afterPlacement)pointer=Vector2.Lerp(gestureFrom,new Vector2(1135,112),Ease((frame-466-afterPlacement)/13f));
+            if(frame==480+afterPlacement)controls.Placement.LockHand(1);
+            if(frame==490+afterPlacement)gestureFrom=pointer;
+            if(frame>=490+afterPlacement && frame<510+afterPlacement)pointer=Vector2.Lerp(gestureFrom,new Vector2(1325,112),Ease((frame-490-afterPlacement)/19f));
+            if(frame==510+afterPlacement)
             {
                 releasedPositions=new[]{controls.Hands[0].position,controls.Hands[1].position};
                 if(!controls.Placement.CommitBoth()){Debug.LogError("Physics take commit failed: "+controls.Placement.Status);Application.Quit(8);}
                 Debug.Log("HATDON_PHYSICS_TAKE_COMMIT: Both cards released with no constraints or pose correction.");
             }
-            if(frame==525){controls.SelectCard(controls.Hands[0]);controls.FocusSelection();}
-            if(frame==550)gestureFrom=pointer;
-            if(frame>=550 && frame<580)pointer=Vector2.Lerp(gestureFrom,new Vector2(1450,320),Ease((frame-550)/29f));
-            if(frame==610){controls.BeginOrbit();gestureFrom=pointer;naturalDragging=true;}
-            if(frame>=610 && frame<700)
+            if(frame==525+afterPlacement){controls.SelectCard(controls.Hands[0]);controls.FocusSelection();}
+            if(frame==550+afterPlacement)gestureFrom=pointer;
+            if(frame>=550+afterPlacement && frame<580+afterPlacement)pointer=Vector2.Lerp(gestureFrom,new Vector2(1450,320),Ease((frame-550-afterPlacement)/29f));
+            if(frame==610+afterPlacement){controls.BeginOrbit();gestureFrom=pointer;naturalDragging=true;}
+            if(frame>=610+afterPlacement && frame<700+afterPlacement)
             {
-                Vector2 next=gestureFrom+new Vector2(95,-5)*Ease((frame-610)/89f);
+                Vector2 next=gestureFrom+new Vector2(95,-5)*Ease((frame-610-afterPlacement)/89f);
                 controls.Orbit(next-pointer);pointer=next;
             }
-            if(frame==700)naturalDragging=false;
+            if(frame==700+afterPlacement)naturalDragging=false;
         }
 
         // Closed-loop cursor input uses precisely the same projected-axis mapping as a mouse drag.
@@ -116,6 +132,15 @@ namespace Hatdon.CardStacker
             for(int i=0;i<2;i++)drift=Mathf.Max(drift,Vector3.Distance(controls.Hands[i].position,releasedPositions[i]));
             Debug.Log("HATDON_PHYSICS_TAKE_STANDING: Released triangle stayed standing for 13 seconds; maximum displacement "+(drift*1000).ToString("F4")+" mm.");
             return drift<.005f;
+        }
+
+        private bool PhysicsTakeFallen()
+        {
+            if(!controls.Placement.IsCommitted)return false;
+            foreach(var card in controls.Hands)
+                if(card.isKinematic || card.position.y>.002f || card.position.y<-.001f || Mathf.Abs(Vector3.Dot(card.rotation*Vector3.forward,Vector3.up))<.85f)return false;
+            Debug.Log("HATDON_MISALIGNED_FALL_OK: Both released cards fell flat after missing each other's support; no applied impulse or pose correction.");
+            return true;
         }
     }
 }

@@ -1,5 +1,12 @@
 # Changelog
 
+## Locked-contact and failed-placement verification — 2026-11-03
+
+- Added explicit assertions that dragging into a locked card stops movement without pushing the locked card.
+- Added a deliberately depth-misaligned placement that falls after commit.
+- Added a recording showing the blocked drag, misalignment, joint release and fall.
+- Gameplay and physics tuning are unchanged; the previous successful triangle remains preserved.
+
 ## Lock, commit and physical balance — 2026-11-03
 
 - Added independent hand locks, reopen-to-adjust, two-lock commit and reset.

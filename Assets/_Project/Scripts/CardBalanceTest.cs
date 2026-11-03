@@ -63,12 +63,29 @@ namespace Hatdon.CardStacker
                     c.Manipulator.Translate(Vector3.right*((i==0 ? -targetX : targetX)-card.position.x));
                     c.Manipulator.Translate(Vector3.up*(targetY-card.position.y));
                     Require(Mathf.Abs(card.position.y-targetY)<.00002f,"Triangle can be placed with contact-aware controls");
+                    if(i==1)
+                    {
+                        Vector3 fixedPosition=left.position;Quaternion fixedRotation=left.rotation;
+                        Require(s.IsLocked(0),"First hand remains locked while adjusting the second");
+                        Require(!c.Manipulator.Translate(Vector3.left*.012f),"Attempt to drag through locked card is stopped");
+                        Require(left.position==fixedPosition && left.rotation==fixedRotation,"Locked card is neither pushed nor rotated");
+                        Require(right.position.x>targetX-.00005f,"Moving card remains on its own side of locked contact");
+                        c.Manipulator.Translate(Vector3.right*(targetX-right.position.x));
+                    }
                     s.LockHand(i);
                 }
                 Require(s.CommitBoth(),"Manually assembled triangle commits");
                 Simulate(20);
                 Require(left.position.y>.025f && right.position.y>.025f,"Control-assembled triangle remains standing");
                 Debug.Log("HATDON_MANUAL_TRIANGLE_OK: Contact-aware placement API, lock both and commit remains standing for 20 seconds.");
+
+                s.ResetCards();Triangle(left,right,28);
+                Pose(right,right.position+Vector3.forward*.068f,right.rotation);
+                s.LockHand(0);s.LockHand(1);Require(s.CommitBoth(),"Misaligned cards can commit when they do not overlap");
+                Simulate(5);
+                foreach(var card in c.Hands)
+                    Require(card.position.y<.002f && card.position.y>-.001f && Mathf.Abs(Vector3.Dot(card.rotation*Vector3.forward,Vector3.up))>.85f,"Cards with separated top edges fall flat instead of auto-balancing");
+                Debug.Log("HATDON_MISALIGNED_TEST_OK: 68mm depth offset leaves top edges unsupported; both cards fall flat with gravity only.");
 
                 var observations=new System.Collections.Generic.List<string>();
                 foreach(float degrees in new[]{24f,28f,32f})

@@ -1,5 +1,13 @@
 # Development record
 
+## 2026-11-03 — Locked contact and a failed placement
+
+User asked whether the other card stops at a locked card and requested a visibly misaligned placement that falls. The held movement logic already rejects penetration. The added check keeps the first hand locked, requests a 12mm move through its contact boundary, verifies that the second card stops on its own side and that the locked body has neither moved nor rotated.
+
+The failure fixture uses the same 28-degree lean and all existing physics settings, but offsets the second card 68mm in depth. Their 63mm-wide upper edges miss by 5mm, leaving each inclined card unsupported by the other. Both are locked and committed normally; the regression test checks that both become dynamic and fall flat on the table under gravity. No impulse, forced drop, changed friction or post-release pose assignment is used. Existing aligned-triangle and bump tests remain in the suite.
+
+Failure Take 01 uses actual screen-handle drags to demonstrate the contact stop, move the second card out of alignment, lock and commit both, then observe seven released seconds. It is an automated demonstration, not a human play-test. The successful triangle take/build stays unchanged; the new build, source, footage and checksums belong under `DevLogs/Card-Stacker/prototypes/004-lock-commit-physics/failure-take01/`.
+
 ## 2026-11-03 — Prototype 004: hand locks, commit and physical cards
 
 User requested locking each hand, switching back to adjust either locked card, a final joint commit into physics, and a test with two leaning cards forming a triangle. Each lock retains its kinematic hold. Selecting that hand reopens its lock. Both must be locked to commit. The commit rejects material overlap, ends manipulation, and switches both rigid bodies to dynamic before the next physics step, with zero release velocity and no pose correction. After commit, selection is inspection only; Reset restores the initial held poses.

@@ -43,6 +43,8 @@ Selecting a card does not move the camera. The camera stays above the tabletop. 
 
 Moves and rotations stop when the card meets the table or other card. Contact is checked in small swept steps with a refined stopping point; cards do not push each other while held. Selecting a locked hand reopens it; lock it again before committing. Both locks are required, and overlapping placements are rejected. Commit changes both bodies to dynamic in the same update without moving them or adding a release impulse. Released cards can be inspected but cannot be repositioned with handles. Reset to try again.
 
+The locked-card check is explicitly tested: dragging the other card through it stops the moving card and leaves the locked pose unchanged. A separate failed-placement test offsets the second card in depth so their upper edges miss; after commit, both fall flat through gravity without an added push. The successful aligned triangle and failed placement use the same physics settings.
+
 The rigid-card model uses 63x88x0.32mm cards at 1.8g, 240Hz physics, finite paper/felt friction, zero bounce and low linear/angular damping. These are initial approximation/tuning values, not measured material calibration. Card flex, humidity, edge deformation and orientation-dependent aerodynamics are not simulated. No joints, frozen constraints, automatic balance or post-release pose corrections hold a structure up. Additional cards and individual release remain future work.
 
 ## Intended interaction
