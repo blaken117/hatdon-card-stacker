@@ -13,6 +13,7 @@ namespace Hatdon.CardStacker
         public CardPlacementSession Placement { get; private set; }
         public CardDeck Deck { get; private set; }
         public CardHandVisuals HandVisuals { get; private set; }
+        public CardPickupDrop Pickup { get; private set; }
         public int ActiveHand=>lastHandIndex;
         public List<Rigidbody> AllCards { get; }=new List<Rigidbody>();
         public bool CanManipulate => Selected!=null && Placement.CanAdjust(Selected);
@@ -55,6 +56,7 @@ namespace Hatdon.CardStacker
             Manipulator.Initialise(this);
             HandVisuals=gameObject.AddComponent<CardHandVisuals>();HandVisuals.Initialise(this);
             gameObject.AddComponent<CardModeToolbar>().Initialise(this);
+            Pickup=gameObject.AddComponent<CardPickupDrop>();Pickup.Initialise(this);
         }
 
         public void RegisterCard(Rigidbody card)
@@ -145,6 +147,7 @@ namespace Hatdon.CardStacker
             if (Input.GetKeyDown(KeyCode.L) && Selected!=null) Placement.LockHand(System.Array.IndexOf(Hands,Selected));
             if (Input.GetKeyDown(KeyCode.Return)) Placement.CommitBoth();
             if (Input.GetKeyDown(KeyCode.R)) Placement.ResetCards();
+            if (Input.GetKeyDown(KeyCode.F8)) { Pickup.StartDrop(System.Environment.TickCount);FramePickup(); }
             if (Input.GetKeyDown(KeyCode.Tab)) SwitchHand();
             if (Input.GetKeyDown(KeyCode.F)) FocusSelection();
             if (Input.GetKeyDown(KeyCode.Home)) ResetView();
@@ -226,6 +229,10 @@ namespace Hatdon.CardStacker
         {
             Pivot = new Vector3(0, 0.04f, 0);
             transform.SetPositionAndRotation(defaultPosition, defaultRotation);
+        }
+        public void FramePickup()
+        {
+            Pivot=new Vector3(0,.24f,0);transform.position=new Vector3(.65f,.88f,-1.02f);transform.LookAt(Pivot);
         }
 
         public void QuickView(int index)

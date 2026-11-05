@@ -57,6 +57,7 @@ namespace Hatdon.CardStacker
             fallTake=Array.IndexOf(arguments,"-recordFallTake")>=0;
             if(fallTake){physicsTake=true;naturalTake=true;frames=840;}
             deckTake=Array.IndexOf(arguments,"-recordDeckTake")>=0;
+            pickupTake=Array.IndexOf(arguments,"-recordPickupTake")>=0;
             int leanOption=Array.IndexOf(arguments,"-recordMouseLean");
             mouseTrials=leanOption>=0 || Array.IndexOf(arguments,"-recordMouseContact")>=0;
             mouseContact=Array.IndexOf(arguments,"-recordMouseContact")>=0;
@@ -67,7 +68,8 @@ namespace Hatdon.CardStacker
                 naturalTake=true;frames=mouseContact ? 1600 : 1240;
             }
             else if(deckTake){naturalTake=true;frames=900;}
-            if(!deckTake && !mouseTrials)controls.Placement.PrepareTestPair();
+            if(pickupTake)frames=720;
+            if(!deckTake && !mouseTrials && !pickupTake)controls.Placement.PrepareTestPair();
             controls.SelectCard(null);
             controls.ResetView();
             Time.captureFramerate = Fps;
@@ -89,7 +91,8 @@ namespace Hatdon.CardStacker
             var endOfFrame = new WaitForEndOfFrame();
             for (int frame = 0; frame < frames; frame++)
             {
-                if (mouseTrials) DemonstrateMouseTrials(frame);
+                if (pickupTake) DemonstratePickup(frame);
+                else if (mouseTrials) DemonstrateMouseTrials(frame);
                 else if (deckTake) DemonstrateDeck(frame);
                 else if (physicsTake) DemonstratePhysics(frame);
                 else if (artTake) DemonstrateArt(frame);
@@ -110,6 +113,7 @@ namespace Hatdon.CardStacker
                 if (failed) { encoder.StandardInput.Close(); Application.Quit(3); yield break; }
                 if (frame % 180 == 0) UnityEngine.Debug.Log("HATDON_CAPTURE_FRAME " + frame + "/" + frames);
             }
+            if(pickupTake && !PickupTakeValid()){UnityEngine.Debug.LogError("Pickup take validation failed.");Application.Quit(23);yield break;}
             if(mouseTrials && !MouseTrialsValid()){Application.Quit(21);yield break;}
             if(validateMouseOnly){UnityEngine.Debug.Log("HATDON_MOUSE_VALIDATION_OK");Application.Quit(0);yield break;}
             encoder.StandardInput.Close();

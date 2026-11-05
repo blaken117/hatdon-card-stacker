@@ -35,6 +35,7 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | L | Lock a hand at its current pose; still held |
 | Enter | Release both cards when both hands are locked |
 | R | Clear all cards and refill the deck |
+| F8 | Clear the table and replay a fresh random 52-card drop test |
 | Right-drag | Orbit selected card, or table centre |
 | Middle-drag | Pan |
 | Mouse wheel | Zoom within near/far limits |
@@ -43,7 +44,9 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 
 The only HUD elements are four large icons centred along the bottom: move, depth, rotate and twist, with the active mode highlighted. Click an icon or use W/Q/E/T. The first drag from the deck pulls a card onto a horizontal plane 60mm above the tabletop. Subsequent W drags move across the camera view; use Q for depth. E uses a virtual trackball, while T gives a separate twist. Shift reduces sensitivity to one tenth. Two hands can be occupied at once; selecting a locked hand reopens it. Selecting a card does not move the camera.
 
-Locking a card shows a faint cartoon ghost hand: a palm, finger and thumb gripping its long edges. The fill is almost transparent with a soft rim, keeping the card readable. These are visual indicators with no colliders, shadows, joints or forces. Unlocking or committing removes them.
+Locking a card shows a faint, faceted ghost hand with four fingers, thumb and wrist. It stays above the card's upper extent and points vertically down, independently of card tilt; its palm turns toward the camera horizontally. Near-clear fill keeps the card readable. These are visual indicators with no colliders, shadows, joints or forces. Unlocking or committing removes them.
+
+The toolbar uses original filled SVG designs, with transparent textures baked for Unity's immediate-mode UI. SVG sources are under `Tools/UIIcons`; regenerate them and the matching textures with `Tools/generate_solid_ui_icons.py`.
 
 Moves and rotations stop at physical surfaces and other cards, including earlier placed cards. Contact uses small swept steps with a refined stopping point. Both occupied hands must be locked, and overlapping placements refuse commit. Commit changes both bodies to dynamic without moving them or adding a release impulse, then frees the hands for the next draws. Released cards remain simulated and inspectable; mouse adjustment applies only to held cards. Reset clears the table.
 

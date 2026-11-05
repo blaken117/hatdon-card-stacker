@@ -52,6 +52,7 @@ namespace Hatdon.CardStacker
                 Require(Quaternion.Angle(rotation,first.rotation)>5 && first.position==position,"T twist preserves card centre");
                 Pose(first,position,rotation);s.LockHand(0);c.HandVisuals.Refresh();
                 Require(c.HandVisuals.VisibleCount==1,"Lock shows one ghost hand");
+                Require(Vector3.Dot(c.HandVisuals.FingerDirection(0),Vector3.down)>.999f,"Ghost fingers point down regardless of card rotation");
                 c.SelectCard(first);c.HandVisuals.Refresh();
                 Require(c.HandVisuals.VisibleCount==0,"Reopening a lock hides its ghost hand");s.LockHand(0);
 

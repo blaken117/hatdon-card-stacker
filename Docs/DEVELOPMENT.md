@@ -1,5 +1,17 @@
 # Development record
 
+## 2026-11-06 — Prototype 008: reference-style ghost hands, filled SVGs and pickup test
+
+User supplied a low-poly open-hand reference and requested a rebuilt ghost hand always coming from above, cleaner SVG icons without line-work, and footage of 52 randomly positioned cards falling above the table. The new original procedural mesh has a faceted palm, four separate fingers, an angled thumb and an extended wrist. Independent roots mirror left/right hands. Local finger-up maps to world-down and the root sits above the card's orientation-dependent top bound. The palm faces the camera's horizontal direction, so card pitch/roll never tips the hand sideways. Tint opacity is 0.18 with the existing rim-weighted near-clear fill; there are no shadows, colliders, joints or supporting forces.
+
+Four original filled-polygon SVGs are generated under `Tools/UIIcons` with matching supersampled 256px transparent PNGs in `Resources/UIIcons`. The toolbar loads these textures; it adds no new text or controls. Sources remain editable vectors and use fills only. No vector package or external icon artwork is required.
+
+[52-card pickup](https://www.pagat.com/misc/52pickup.html) is the prank of scattering a whole deck and leaving someone to collect it. This test uses that whole-deck scatter idea rather than a turn-based game. F8 explicitly clears the table and creates 52 loose cards above it. A seeded generator places them within x±260mm, z±180mm and y250–680mm, with random Euler angles and rejection of initial intersections. They are all released together with zero linear velocity and a small random initial tumble (±2rad/s). Gravity, the existing air model and actual table/card contacts determine subsequent motion. The stock disappears, hands are free and R clears/refills everything. Normal startup still uses the deck; the drop is opt-in.
+
+The development-player test verifies 52 dynamic airborne bodies, no initial interpenetration, twelve seconds of physical simulation, finite landed cards and complete reset. Seed 520811 leaves all 52 on the desktop. Deck/hand lifecycle tests also pass, including downward finger direction with a tilted card. Existing two-face printed artwork is reused across this physics test; it does not introduce 52 unique face textures.
+
+The capture stages two differently tilted held cards to demonstrate the hand visuals for six seconds, then resets and releases seed 520811. Initial preview/spawn poses are explicit test setup, not footage of player placement. After launch, card positions are determined by physics. The camera widens for the cloud and approaches the scattered cards afterwards. Archive path: `DevLogs/Card-Stacker/prototypes/008-ghost-hand-pickup/`.
+
 ## 2026-11-06 — Prototype 007: minimal HUD and orientation-dependent air resistance
 
 User requested more realistic card physics and removal of extra UI, leaving four large bottom-centred mode icons. The toolbar shows move, depth, rotate and twist in W/Q/E/T order. Each button is 128x128 at the 1920x1080 design size, with an 88px icon and an active accent. Icons are generated from vector strokes in code. There are no HUD labels, readouts, guides, deck count, hand/commit/reset panels or alignment-view buttons. Only actual icon rectangles block scene input. Keyboard L/Tab/Enter/R and camera gestures remain; ghost grips communicate locked state.

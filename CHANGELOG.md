@@ -1,5 +1,13 @@
 # Changelog
 
+## Full ghost hands, solid icons and 52-card drop — 2026-11-06
+
+- Replace the two-digit grip with a faceted four-finger/thumb hand and longer wrist based on the supplied reference.
+- Keep ghosts above each card and pointing down, independently of card rotation; retain low opacity and no physical support.
+- Replace stroke icons with original filled SVG designs and matching Unity UI textures.
+- Add an explicit F8 test that clears the table, releases 52 cards from separated random airborne poses, and consumes the displayed deck.
+- Add a fresh capture showing the hand revision followed by a complete 52-card drop, plus spawn/fall/reset verification.
+
 ## Minimal HUD and air resistance — 2026-11-06
 
 - Replace all HUD panels/text with four large bottom-centred mode icons: move, depth, rotate and twist.

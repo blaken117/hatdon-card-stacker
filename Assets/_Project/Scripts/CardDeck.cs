@@ -23,5 +23,6 @@ namespace Hatdon.CardStacker
             stock.gameObject.SetActive(Remaining>0);Physics.SyncTransforms();return card;
         }
         public void ResetStock(){Remaining=52;stock.gameObject.SetActive(true);stock.localScale=Vector3.one;Physics.SyncTransforms();}
+        public void EmptyForDrop(){Remaining=0;stock.gameObject.SetActive(false);}
     }
 }

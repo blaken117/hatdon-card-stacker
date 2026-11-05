@@ -87,6 +87,15 @@ namespace Hatdon.CardStacker
             if(i<0 || !HasCard(i))return;
             locked[i]=false;Status=(i==0 ? "Left" : "Right")+" hand adjusting. Lock it when ready.";
         }
+        public Rigidbody CreateDropCard(Vector3 position,Quaternion rotation,int number)
+        {
+            var card=Instantiate(originals[number%2]);
+            var oldOutline=card.transform.Find("Selection outline");
+            if(oldOutline!=null){oldOutline.gameObject.SetActive(false);Destroy(oldOutline.gameObject);}
+            controls.RegisterCard(card);ConfigureCard(card);card.gameObject.SetActive(true);
+            card.position=position;card.rotation=rotation;card.name="Pickup card "+(number+1);
+            CardTableArt.StyleDrawnCard(card,number);return card;
+        }
         public bool LockHand(int i)
         {
             if(!HasCard(i))return false;
@@ -131,6 +140,7 @@ namespace Hatdon.CardStacker
                 originals[i].gameObject.SetActive(false);locked[i]=drawn[i]=false;
             }
             IsCommitted=false;Physics.SyncTransforms();controls.SelectCard(null);controls.Deck.ResetStock();
+            controls.Pickup?.Cards.Clear();
             Status="Table reset. Drag a card from the deck.";
         }
         // Explicit fixture for regression checks; normal play starts with empty hands.
