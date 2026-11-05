@@ -14,6 +14,7 @@ namespace Hatdon.CardStacker
         public CardDeck Deck { get; private set; }
         public CardHandVisuals HandVisuals { get; private set; }
         public CardPickupDrop Pickup { get; private set; }
+        public CardRecordingAdmin Admin { get; private set; }
         public int ActiveHand=>lastHandIndex;
         public List<Rigidbody> AllCards { get; }=new List<Rigidbody>();
         public bool CanManipulate => Selected!=null && Placement.CanAdjust(Selected);
@@ -57,6 +58,7 @@ namespace Hatdon.CardStacker
             HandVisuals=gameObject.AddComponent<CardHandVisuals>();HandVisuals.Initialise(this);
             gameObject.AddComponent<CardModeToolbar>().Initialise(this);
             Pickup=gameObject.AddComponent<CardPickupDrop>();Pickup.Initialise(this);
+            Admin=gameObject.AddComponent<CardRecordingAdmin>();Admin.Initialise(this);
         }
 
         public void RegisterCard(Rigidbody card)
@@ -90,7 +92,7 @@ namespace Hatdon.CardStacker
 
         public bool IsOverInterface(Vector2 screenPoint)
         {
-            return CardModeToolbar.Contains(screenPoint);
+            return (Admin!=null && Admin.IsOpen) || (!(Admin!=null && Admin.HideHud) && CardModeToolbar.Contains(screenPoint));
         }
 
         public Rigidbody PickCard(Vector2 screenPoint)
@@ -128,6 +130,11 @@ namespace Hatdon.CardStacker
 #if HATDON_CAPTURE
             if (CaptureMode) return;
 #endif
+            if(Input.GetKeyDown(KeyCode.Escape)){Admin.SetOpen(!Admin.IsOpen);return;}
+            if(Admin.IsOpen)return;
+            if(Input.GetKeyDown(KeyCode.Space))Admin.TogglePlayback();
+            if(Input.GetKeyDown(KeyCode.Period))Admin.StepFrame();
+            if(Input.GetKeyDown(KeyCode.F10))Admin.HideHud=!Admin.HideHud;
             Vector2 pointer = Input.mousePosition;
             bool overUI = IsOverInterface(pointer);
             hovered = overUI ? null : PickCard(pointer);
@@ -143,11 +150,10 @@ namespace Hatdon.CardStacker
             if (Input.GetKeyDown(KeyCode.Q)) SetMouseTool(CardManipulator.Tool.Depth,pointer);
             if (Input.GetKeyDown(KeyCode.E)) SetMouseTool(CardManipulator.Tool.Rotate,pointer);
             if (Input.GetKeyDown(KeyCode.T)) SetMouseTool(CardManipulator.Tool.Roll,pointer);
-            if (Input.GetKeyDown(KeyCode.Escape)) SelectCard(null);
             if (Input.GetKeyDown(KeyCode.L) && Selected!=null) Placement.LockHand(System.Array.IndexOf(Hands,Selected));
             if (Input.GetKeyDown(KeyCode.Return)) Placement.CommitBoth();
-            if (Input.GetKeyDown(KeyCode.R)) Placement.ResetCards();
-            if (Input.GetKeyDown(KeyCode.F8)) { Pickup.StartDrop(System.Environment.TickCount);FramePickup(); }
+            if (Input.GetKeyDown(KeyCode.R)) { Placement.ResetCards();Admin.SetPaused(false); }
+            if (Input.GetKeyDown(KeyCode.F8)) { Pickup.StartDrop(System.Environment.TickCount);FramePickup();Admin.SetPaused(false); }
             if (Input.GetKeyDown(KeyCode.Tab)) SwitchHand();
             if (Input.GetKeyDown(KeyCode.F)) FocusSelection();
             if (Input.GetKeyDown(KeyCode.Home)) ResetView();
@@ -172,6 +178,9 @@ namespace Hatdon.CardStacker
             if(resume && CanManipulate)Manipulator.BeginPointerDrag(pixel);
         }
         public void SetHandlingMode(CardManipulator.Tool mode) => SetMouseTool(mode,Input.mousePosition);
+        public void CancelGestures(){orbiting=panning=false;hovered=null;Manipulator.EndDrag();lastPointer=Input.mousePosition;}
+        public void SetCameraView(Vector3 position,Vector3 target){Pivot=target;transform.position=position;transform.LookAt(target);KeepAboveTable();}
+        public void RestoreCameraView(Vector3 position,Quaternion rotation,Vector3 pivot){Pivot=pivot;transform.SetPositionAndRotation(position,rotation);KeepAboveTable();}
 
         public void Orbit(Vector2 pixels)
         {
@@ -250,7 +259,7 @@ namespace Hatdon.CardStacker
                 var card = item.Key;
                 var line = item.Value;
                 if(card==null || line==null)continue;
-                line.enabled = card.gameObject.activeInHierarchy && (card == Selected || card == hovered);
+                line.enabled = !(Admin!=null && Admin.HideHud) && card.gameObject.activeInHierarchy && (card == Selected || card == hovered);
                 if (!line.enabled) continue;
                 Color color = card == Selected ? new Color(1, 0.74f, 0.24f) : new Color(0.48f, 0.88f, 1);
                 line.startColor = line.endColor = color;

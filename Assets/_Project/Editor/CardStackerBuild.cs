@@ -15,13 +15,14 @@ namespace Hatdon.CardStacker.Editor
             if (option < 0 || option + 1 >= args.Length) throw new ArgumentException("Supply -buildOutput EXE path.");
             string output = Path.GetFullPath(args[option + 1]);
             bool capture = Array.IndexOf(args, "-captureBuild") >= 0;
+            bool release = Array.IndexOf(args, "-releaseBuild") >= 0;
             Directory.CreateDirectory(Path.GetDirectoryName(output));
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
                 scenes = new[] { "Assets/_Project/Scenes/CardStacker.unity" },
                 locationPathName = output,
                 target = BuildTarget.StandaloneWindows64,
-                options = capture ? BuildOptions.None : BuildOptions.Development,
+                options = capture || release ? BuildOptions.None : BuildOptions.Development,
                 extraScriptingDefines = capture ? new[] { "HATDON_CAPTURE" } : Array.Empty<string>()
             });
             if (report.summary.result != BuildResult.Succeeded) throw new Exception("Windows preview build failed: " + report.summary.result);

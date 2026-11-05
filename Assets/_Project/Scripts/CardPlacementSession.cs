@@ -140,7 +140,7 @@ namespace Hatdon.CardStacker
                 originals[i].gameObject.SetActive(false);locked[i]=drawn[i]=false;
             }
             IsCommitted=false;Physics.SyncTransforms();controls.SelectCard(null);controls.Deck.ResetStock();
-            controls.Pickup?.Cards.Clear();
+            controls.Pickup?.ClearState();
             Status="Table reset. Drag a card from the deck.";
         }
         // Explicit fixture for regression checks; normal play starts with empty hands.

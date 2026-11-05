@@ -9,10 +9,17 @@ namespace Hatdon.CardStacker
     {
         private CardStackerControls controls;
         public readonly List<Rigidbody> Cards=new List<Rigidbody>();
+        private readonly List<Vector3> spins=new List<Vector3>();
+        public bool IsPrepared { get; private set; }
         public void Initialise(CardStackerControls owner)=>controls=owner;
         public void StartDrop(int seed)
         {
-            controls.Placement.ResetCards();Cards.Clear();
+            PrepareDrop(seed);ReleasePrepared();
+        }
+        public void ClearState(){Cards.Clear();spins.Clear();IsPrepared=false;}
+        public void PrepareDrop(int seed)
+        {
+            controls.Placement.ResetCards();ClearState();
             var random=new System.Random(seed);
             for(int i=0;i<52;i++)
             {
@@ -31,14 +38,23 @@ namespace Hatdon.CardStacker
                 Cards.Add(card);
             }
             Physics.SyncTransforms();
-            foreach(var card in Cards)
+            foreach(var card in Cards)spins.Add(new Vector3(Range(random,-2,2),Range(random,-2,2),Range(random,-2,2)));
+            IsPrepared=true;
+            controls.Deck.EmptyForDrop();controls.HandVisuals.Refresh();
+            Debug.Log("HATDON_PICKUP_PREPARED: 52 separated random poses; seed "+seed);
+        }
+        public void ReleasePrepared()
+        {
+            if(!IsPrepared)return;
+            for(int i=0;i<Cards.Count;i++)
             {
+                var card=Cards[i];
                 card.isKinematic=false;card.collisionDetectionMode=CollisionDetectionMode.ContinuousDynamic;
                 card.linearVelocity=Vector3.zero;
-                card.angularVelocity=new Vector3(Range(random,-2,2),Range(random,-2,2),Range(random,-2,2));card.WakeUp();
+                card.angularVelocity=spins[i];card.WakeUp();
             }
-            controls.Deck.EmptyForDrop();controls.HandVisuals.Refresh();
-            Debug.Log("HATDON_PICKUP_SPAWN: 52 non-overlapping dynamic cards, random poses; seed "+seed);
+            IsPrepared=false;
+            Debug.Log("HATDON_PICKUP_SPAWN: 52 non-overlapping dynamic cards released.");
         }
         private static float Range(System.Random random,float a,float b)=>Mathf.Lerp(a,b,(float)random.NextDouble());
     }

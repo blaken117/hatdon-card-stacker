@@ -1,0 +1,28 @@
+{
+  "shots": [
+    {
+      "id": "p008-pickup",
+      "title": "52 Card Pickup",
+      "preset": "pickup",
+      "instructions": "Prepare the shot, start your screen recorder, then press Space. Record the full 52-card fall and keep rolling for 10-15 seconds as the cards settle. Get a wide take, then an optional closer or slow-motion take. Same seed repeats the starting layout."
+    },
+    {
+      "id": "p008-ghost-hands",
+      "title": "Ghost Hands",
+      "preset": "hands",
+      "instructions": "Show both low-opacity hands pointing down from above differently tilted cards. Orbit slowly to show their shape and direction. Press Enter to release both cards and show the hands disappearing. This preset stages a visual example, not a balanced structure."
+    },
+    {
+      "id": "p008-solid-icons",
+      "title": "Solid Movement Icons",
+      "preset": "normal",
+      "instructions": "Keep the HUD visible. Draw a card, click each of the four mode icons and show the active highlight. Make a short move, depth adjustment, rotation and twist. Shift gives fine control. Record with the four icons visible."
+    },
+    {
+      "id": "p009-recording-tools",
+      "title": "Admin Recording Tools",
+      "preset": "none",
+      "instructions": "Optional dev-log shot: open Esc, show 52 Card Pickup in the shot list, prepare it, then close the menu and press Space. Show how a feature can be replayed for recording. Capture this menu only when explaining the tools."
+    }
+  ]
+}

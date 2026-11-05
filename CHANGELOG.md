@@ -1,5 +1,13 @@
 # Changelog
 
+## Esc admin tools and manual recording workflow — 2026-11-06
+
+- Adopt user-recorded footage: retain feature notes and a shot checklist, remind the user before final editing, and stop automatic gameplay captures.
+- Add an Esc menu with pending/recorded shots, 52 Card Pickup preparation, repeatable seeds, a ghost-hand scene and normal gameplay setup.
+- Add manual release/pause, slow motion, single-frame stepping, clean HUD, camera framing/bookmark and local recording notes/clip paths.
+- Split pickup preparation from release so the user can start a screen recorder before the cards fall.
+- Add a clean release-build option without legacy recording helpers.
+
 ## Full ghost hands, solid icons and 52-card drop — 2026-11-06
 
 - Replace the two-digit grip with a faceted four-finger/thumb hand and longer wrist based on the supplied reference.

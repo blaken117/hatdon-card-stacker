@@ -246,7 +246,7 @@ namespace Hatdon.CardStacker
             if (!controls.CanManipulate) EndDrag();
             for (int i = 0; i < 3; i++)
             {
-                var line = lines[i]; line.enabled = controls.CanManipulate;
+                var line = lines[i]; line.enabled = controls.CanManipulate && !(controls.Admin!=null && controls.Admin.HideHud);
                 if (!line.enabled) continue;
                 // Direct mouse controls use a subtle centre marker rather than draggable axis handles.
                 if(i>0){line.enabled=false;continue;}

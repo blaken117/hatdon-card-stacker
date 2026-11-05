@@ -25,7 +25,7 @@ namespace Hatdon.CardStacker
 
         private void OnGUI()
         {
-            if (controls == null) return;
+            if (controls == null || (controls.Admin!=null && (controls.Admin.IsOpen || controls.Admin.HideHud))) return;
             Matrix4x4 old = GUI.matrix;Color oldColor = GUI.color;
             GUI.matrix = Matrix4x4.Scale(new Vector3(Screen.width / 1920f, Screen.height / 1080f, 1));
             for (int i = 0; i < 4; i++)

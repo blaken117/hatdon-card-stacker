@@ -1,5 +1,15 @@
 # Development record
 
+## 2026-11-06 — Prototype 009: user-operated recording tools
+
+User changed the workflow: do not record gameplay footage automatically. Keep feature notes, provide tools in an Esc admin menu, and remind them what to record before making the final video. This overrides the previous expectation of automated footage per milestone. No new gameplay recording belongs to this milestone. Source/build/test preservation continues; still screenshots are allowed for verification.
+
+Esc opens a modal menu that pauses without releasing held cards, cancels gestures and blocks scene input. It lists versioned shots from `Resources/DevlogShots.json`. The 52 Card Pickup preset prepares 52 separated seeded poses as kinematic bodies and closes into a paused scene; Space releases them together after the user starts their recorder. Reusing a seed repeats the layout. F8's existing immediate drop remains available. Ghost-hand and normal-play presets cover the other latest changes. Space pauses/resumes; period advances 1/60 second as four 240Hz physics steps. Slow-motion selection survives menu opening. F10 hides only HUD/selection helpers, retaining the hand feature itself.
+
+The menu also supplies wide/close camera framing, a persistent camera bookmark and user-marked recording progress with optional clip paths. State is written locally to `devlog-recording-progress.json` under Application.persistentDataPath; no footage is recorded, inspected, uploaded or scheduled by these controls. Existing footage is untouched. `Docs/RECORDING-CHECKLIST.md` and AGENTS.md require a missing-takes reminder and actual file verification before final editing. Development checks use an isolated state path so they do not alter the user's real checklist.
+
+Verification passed: modal pause and gesture cancellation, no click-through, all 52 cards held until release, single-frame physics advance, same/new seed layouts, preserved slow motion, hidden-HUD input, saved camera restore, persisted status/clip path/seed, hand preset and full reset. The existing 52-body twelve-second drop regression also passes. A QA still confirms menu layout; no gameplay video was produced. The clean interactive release compiles without the legacy HATDON_CAPTURE class. The menu includes a 1920x1080 window button and current-resolution readout.
+
 ## 2026-11-06 — Prototype 008: reference-style ghost hands, filled SVGs and pickup test
 
 User supplied a low-poly open-hand reference and requested a rebuilt ghost hand always coming from above, cleaner SVG icons without line-work, and footage of 52 randomly positioned cards falling above the table. The new original procedural mesh has a faceted palm, four separate fingers, an angled thumb and an extended wrist. Independent roots mirror left/right hands. Local finger-up maps to world-down and the root sits above the card's orientation-dependent top bound. The palm faces the camera's horizontal direction, so card pitch/roll never tips the hand sideways. Tint opacity is 0.18 with the existing rim-weighted near-clear fill; there are no shadows, colliders, joints or supporting forces.
