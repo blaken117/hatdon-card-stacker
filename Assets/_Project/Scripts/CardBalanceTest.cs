@@ -129,7 +129,15 @@ namespace Hatdon.CardStacker
         }
 
         private static void Pose(Rigidbody body,Vector3 p,Quaternion q){body.position=p;body.rotation=q;Physics.SyncTransforms();}
-        private static void Simulate(float seconds){for(int i=0;i<Mathf.RoundToInt(seconds/CardPlacementSession.Step);i++)Physics.Simulate(CardPlacementSession.Step);}
+        private static void Simulate(float seconds)
+        {
+            var models=FindObjectsByType<CardAerodynamics>(FindObjectsSortMode.None);
+            for(int i=0;i<Mathf.RoundToInt(seconds/CardPlacementSession.Step);i++)
+            {
+                foreach(var model in models)model.ApplyForces();
+                Physics.Simulate(CardPlacementSession.Step);
+            }
+        }
         private static void Require(bool value,string message){if(!value)throw new Exception(message);}
     }
 

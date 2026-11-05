@@ -4,7 +4,7 @@ A Unity experiment about building structures from playing cards using two virtua
 
 ## Status
 
-Deck and mouse-control prototype. Drag cards from the deck into two free hands, position and lock each, then commit both into gravity and contact physics. Draw the next pair while earlier cards remain on the table. This is not a finished game.
+Deck and mouse-control prototype with a minimal four-icon HUD and orientation-dependent air resistance. Draw cards into two free hands, position and lock each, then commit both into gravity and contact physics. Draw the next pair while earlier cards remain on the table. This is not a finished game.
 
 ## Open the project
 
@@ -26,23 +26,22 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | Drag from deck | Draw one card into a free hand and pull it onto the table |
 | Left-click a card | Select it; gold outline; drag to adjust a held card |
 | Left-click empty table / Esc | Deselect without changing held/released state |
-| Left / Right hand buttons / Tab | Select hand; reopen its lock for adjustment |
-| W / Move button | Mouse drag moves across the camera view |
-| Q / Depth button | Mouse up/down moves nearer/farther along the view direction |
-| E / Rotate button | Mouse drag rotates around the card's fixed midpoint |
-| T / Twist button | Mouse left/right twists around the viewing axis |
+| Tab | Switch hand; reopen its lock for adjustment |
+| First icon / W | Mouse drag moves across the camera view |
+| Second icon / Q | Mouse up/down moves nearer/farther along the view direction |
+| Third icon / E | Mouse drag rotates around the card's fixed midpoint |
+| Fourth icon / T | Mouse left/right twists around the viewing axis |
 | Shift while dragging | One-tenth movement or rotation sensitivity |
-| L / Lock buttons | Lock a hand at its current pose; still held |
-| Enter / Commit both | Release both cards when both hands are locked |
-| R / Reset table | Clear all cards and refill the deck |
+| L | Lock a hand at its current pose; still held |
+| Enter | Release both cards when both hands are locked |
+| R | Clear all cards and refill the deck |
 | Right-drag | Orbit selected card, or table centre |
 | Middle-drag | Pan |
 | Mouse wheel | Zoom within near/far limits |
 | F | Focus selected card, or table centre |
 | Home | Restore initial camera |
-| Front / Side / Overhead buttons | Alignment views |
 
-Selecting a card does not move the camera. The first drag from the deck pulls the card onto a horizontal plane 60mm above the tabletop. Subsequent W drags move across the camera view; use Q for depth. E uses a virtual trackball, while T gives a separate twist. Shift reduces sensitivity to one tenth. Position readouts use world millimetres and rotation uses world Euler degrees. Two hands can be occupied at once; selecting a locked hand reopens it.
+The only HUD elements are four large icons centred along the bottom: move, depth, rotate and twist, with the active mode highlighted. Click an icon or use W/Q/E/T. The first drag from the deck pulls a card onto a horizontal plane 60mm above the tabletop. Subsequent W drags move across the camera view; use Q for depth. E uses a virtual trackball, while T gives a separate twist. Shift reduces sensitivity to one tenth. Two hands can be occupied at once; selecting a locked hand reopens it. Selecting a card does not move the camera.
 
 Locking a card shows a faint cartoon ghost hand: a palm, finger and thumb gripping its long edges. The fill is almost transparent with a soft rim, keeping the card readable. These are visual indicators with no colliders, shadows, joints or forces. Unlocking or committing removes them.
 
@@ -50,7 +49,7 @@ Moves and rotations stop at physical surfaces and other cards, including earlier
 
 The locked-card check is explicitly tested: dragging the other card through it stops the moving card and leaves the locked pose unchanged. A separate failed-placement test offsets the second card in depth so their upper edges miss; after commit, both fall flat through gravity without an added push. The successful aligned triangle and failed placement use the same physics settings.
 
-The rigid-card model uses 63x88x0.32mm cards at 1.8g, 240Hz physics, finite paper/felt friction, zero bounce and low linear/angular damping. These are initial approximation/tuning values, not measured material calibration. Card flex, humidity, edge deformation and orientation-dependent aerodynamics are not simulated. No joints, frozen constraints, automatic balance or post-release pose corrections hold a structure up. Release is still a joint two-card commit.
+The rigid-card model uses 63x88x0.32mm cards at 1.8g, 240Hz physics, finite paper/felt friction and zero bounce. Sixteen surface patches apply still-air drag using point velocity, so broadside motion meets more resistance than edge-first motion and tumbling produces resisting torque. Uniform linear/angular damping is zero. This flat-plate approximation is experimental, not measured card-stock calibration; card flex, humidity, edge deformation, lift and unsteady flutter are not simulated. No joints, frozen constraints, automatic balance or post-release pose corrections hold a structure up. Release is still a joint two-card commit.
 
 ## Intended interaction
 

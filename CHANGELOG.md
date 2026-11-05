@@ -1,5 +1,13 @@
 # Changelog
 
+## Minimal HUD and air resistance — 2026-11-06
+
+- Replace all HUD panels/text with four large bottom-centred mode icons: move, depth, rotate and twist.
+- Highlight the active mode; retain W/Q/E/T, Shift, L, Tab, Enter, R and camera shortcuts.
+- Free former panel areas for scene picking; only the four actual button rectangles block input.
+- Replace uniform body damping with orientation-dependent air resistance distributed over sixteen surface patches, including resistance to tumbling.
+- Verify broadside versus edge-first drops, dissipative force, sleep, balance, contact, deck/hand lifecycle and camera controls.
+
 ## Ghost hands and mouse-control recordings — 2026-11-03
 
 - Show a faint cartoon finger/thumb grip only while each hand is locked; hide it on unlock, release or reset.

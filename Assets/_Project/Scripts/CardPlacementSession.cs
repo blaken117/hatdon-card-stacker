@@ -38,7 +38,8 @@ namespace Hatdon.CardStacker
             var collider=card.GetComponent<Collider>();collider.sharedMaterial=paper;collider.contactOffset=.000025f;
             if(!card.isKinematic){card.linearVelocity=Vector3.zero;card.angularVelocity=Vector3.zero;}
             card.isKinematic=true;card.mass=CardMass;card.useGravity=true;card.constraints=RigidbodyConstraints.None;
-            card.linearDamping=.04f;card.angularDamping=.08f;card.solverIterations=64;card.solverVelocityIterations=16;
+            card.linearDamping=0;card.angularDamping=0;card.solverIterations=64;card.solverVelocityIterations=16;
+            if(card.GetComponent<CardAerodynamics>()==null)card.gameObject.AddComponent<CardAerodynamics>();
             card.maxDepenetrationVelocity=.12f;card.maxAngularVelocity=35;card.sleepThreshold=.0000001f;
             card.inertiaTensorRotation=Quaternion.identity;
             float w=size.x,h=size.y,t=size.z;
