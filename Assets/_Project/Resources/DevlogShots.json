@@ -29,6 +29,12 @@
       "title": "Mouse Movement in 3D",
       "preset": "normal",
       "instructions": "Draw a card and keep Move selected. Hold the left button and drag sideways and up or down. Scroll in both directions while still holding the card, then keep dragging at the new depth. Repeat with Shift for a precise adjustment."
+    },
+    {
+      "id": "p011-hold-to-rotate",
+      "title": "Hold E to Rotate",
+      "preset": "normal",
+      "instructions": "Keep the HUD visible. Draw a card in Move mode. While holding left click, hold E and move the mouse to rotate. Release E while keeping left click held, then move the card again. Show the Hold E label and the mode highlight."
     }
   ]
 }

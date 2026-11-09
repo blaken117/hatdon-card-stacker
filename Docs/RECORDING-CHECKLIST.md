@@ -14,6 +14,8 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 - [ ] **Admin Recording Tools** (`p009-recording-tools`, optional): Show Esc → 52 Card Pickup → prepare → close → Space. This is a tools/workflow shot only if useful to the episode.
 - [ ] **Mouse Movement in 3D** (`p010-mouse-movement`). Prepare the shot in Esc, draw one card and stay in Move. Hold left click, drag across the view, scroll nearer and farther, and continue dragging at the new depth. Repeat with Shift for a precise move.
 
+- [ ] **Hold E to Rotate** (`p011-hold-to-rotate`). In the Esc preset, draw a card in Move mode. Keep left click held while pressing E to rotate, then release E and move again. Keep the HUD visible to show the keybind and mode highlight.
+
 ## In-game recording tools
 
 - **Esc:** open/close the admin menu. Opening cancels drag/camera gestures and pauses the simulation without releasing cards. Closing restores the previous playback/pause state.

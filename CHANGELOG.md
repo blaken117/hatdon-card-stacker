@@ -1,5 +1,9 @@
 # Changelog
 
+## Hold to rotate
+
+- Hold E during a card drag to rotate, then release E to return to the selected tool. The Rotate icon displays the shortcut.
+
 ## Mouse movement in three axes — 2026-11-09
 
 - Use the wheel to move a card nearer or farther during a Move drag. Shift gives finer wheel adjustment as well as finer dragging.

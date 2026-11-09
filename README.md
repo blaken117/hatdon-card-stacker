@@ -32,7 +32,7 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | Tab | Switch hand; reopen its lock for adjustment |
 | First icon / W | Drag across the camera view and scroll during the same drag to adjust depth |
 | Second icon / Q | Mouse up/down moves nearer/farther along the view direction |
-| Third icon / E | Mouse drag rotates around the card's fixed midpoint |
+| Third icon / hold E during a drag | Rotate around the card's fixed midpoint. Release E to return to the selected tool. |
 | Fourth icon / T | Mouse left/right twists around the viewing axis |
 | Shift while dragging | One-tenth movement or rotation sensitivity |
 | L | Lock a hand at its current pose; still held |
@@ -45,7 +45,7 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | F | Focus selected card, or table centre |
 | Home | Restore initial camera |
 
-The only HUD elements are four large icons centred along the bottom: move, depth, rotate and twist, with the active mode highlighted. Click an icon or use W/Q/E/T. The first drag from the deck pulls a card onto a horizontal plane 60mm above the tabletop. Subsequent W drags move across the camera view; use Q for depth. E uses a virtual trackball, while T gives a separate twist. Shift reduces sensitivity to one tenth. Two hands can be occupied at once; selecting a locked hand reopens it. Selecting a card does not move the camera.
+The HUD shows four icons along the bottom for move, depth, rotate and twist, with the active mode highlighted. Click an icon or use W, Q or T to select Move, Depth or Twist. Hold E during a drag to temporarily rotate around the card’s midpoint. The first drag from the deck pulls a card onto a horizontal plane 60mm above the tabletop. Subsequent Move drags follow the camera view, with the wheel controlling depth. Shift reduces sensitivity to one tenth. Two hands can be occupied at once. Selecting a locked hand reopens it. Selecting a card does not move the camera.
 
 Locking a card shows a faint, faceted ghost hand with four fingers, thumb and wrist. It stays above the card's upper extent and points vertically down, independently of card tilt; its palm turns toward the camera horizontally. Near-clear fill keeps the card readable. These are visual indicators with no colliders, shadows, joints or forces. Unlocking or committing removes them.
 

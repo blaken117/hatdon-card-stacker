@@ -46,6 +46,16 @@ namespace Hatdon.CardStacker
                 Require(Vector3.Distance(first.position,afterScroll)<.000001f,"Holding still after scrolling does not jump");
                 m.DragPointerTo(centre+new Vector2(25,15),false);
                 Require(Vector3.Distance(first.position,afterScroll)>.002f && Mathf.Abs(Vector3.Dot(first.position-afterScroll,Camera.main.transform.forward))<.00001f,"The same grab continues moving across the new depth plane");
+                Vector3 beforeRotate = first.position;
+                Vector2 grab = Camera.main.WorldToScreenPoint(beforeRotate);
+                m.DragPointerTo(grab,false,holdRotate:true);
+                Require(first.position == beforeRotate && first.rotation == rotation,"Pressing E does not jump the card");
+                m.DragPointerTo(grab + Vector2.right * 35,false,holdRotate:true);
+                Require(Quaternion.Angle(first.rotation,rotation)>5 && first.position == beforeRotate,"Holding E rotates around the card centre during the same grab");
+                m.DragPointerTo(grab,false);
+                Require(m.ActiveMode == CardManipulator.Tool.Move && first.position == beforeRotate,"Releasing E restores Move without a jump");
+                m.DragPointerTo(grab + Vector2.right * 25,false);
+                Require(Vector3.Distance(first.position,beforeRotate)>.002f,"The original grab still moves after releasing E");
                 m.EndDrag();
                 Pose(first,position,rotation);
                 m.SetTool(CardManipulator.Tool.Depth);m.BeginPointerDrag(centre);m.DragPointerTo(centre+Vector2.up*20,false);m.EndDrag();

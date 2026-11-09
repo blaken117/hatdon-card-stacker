@@ -6,6 +6,7 @@ namespace Hatdon.CardStacker
     {
         public enum Tool { Move, Rotate, Depth, Roll }
         public Tool Mode { get; private set; }
+        public Tool ActiveMode => rotateHeld ? Tool.Rotate : Mode;
         public bool Dragging { get; private set; }
         public bool ContactBlocked { get; private set; }
         public bool FineAdjustment { get; private set; }
@@ -24,6 +25,7 @@ namespace Hatdon.CardStacker
         private float contactUntil;
         private Plane pointerPlane;
         private Vector2 pointerCentre;
+        private bool rotateHeld;
         private const float ArcballRadius=120;
         public float HandleSize => Mathf.Clamp(Vector3.Distance(view.transform.position, controls.Selected.position) * .14f, .018f, .2f);
 
@@ -47,7 +49,7 @@ namespace Hatdon.CardStacker
         }
 
         public void SetTool(Tool tool) { EndDrag(); Mode = tool; }
-        public void EndDrag() { Dragging = false; ActiveAxis = -1; FineAdjustment = false; }
+        public void EndDrag() { Dragging = false; ActiveAxis = -1; FineAdjustment = false; rotateHeld = false; }
 
         public bool BeginPointerDrag(Vector2 pointer)
         {
@@ -82,12 +84,19 @@ namespace Hatdon.CardStacker
             return new Vector3(p.x,p.y,Mathf.Sqrt(1-p.sqrMagnitude));
         }
 
-        public void DragPointerTo(Vector2 pointer,bool fine,float depthScroll=0)
+        public void DragPointerTo(Vector2 pointer,bool fine,float depthScroll=0,bool holdRotate=false)
         {
             if(!Dragging || !controls.CanManipulate)return;
             FineAdjustment=fine;float precision=fine ? .1f : 1;
+            if (holdRotate != rotateHeld)
+            {
+                rotateHeld = holdRotate;
+                previousPointer = pointer;
+                pointerCentre = view.WorldToScreenPoint(controls.Selected.position);
+                pointerPlane = new Plane(pointerPlane.normal, controls.Selected.position);
+            }
             Vector2 delta=pointer-previousPointer;
-            if(Mode==Tool.Move)
+            if(ActiveMode==Tool.Move)
             {
                 Ray a=view.ScreenPointToRay(previousPointer),b=view.ScreenPointToRay(pointer);
                 if(pointerPlane.Raycast(a,out float da) && pointerPlane.Raycast(b,out float db))
@@ -101,13 +110,13 @@ namespace Hatdon.CardStacker
                     pointerPlane = new Plane(pointerPlane.normal, controls.Selected.position);
                 }
             }
-            else if(Mode==Tool.Depth)
+            else if(ActiveMode==Tool.Depth)
             {
                 float distance=Vector3.Distance(view.transform.position,controls.Selected.position);
                 float metres=2*distance*Mathf.Tan(view.fieldOfView*Mathf.Deg2Rad/2)/Screen.height;
                 Translate(view.transform.forward*(delta.y*metres*precision));
             }
-            else if(Mode==Tool.Roll)Rotate(view.transform.forward,-delta.x*.35f*precision);
+            else if(ActiveMode==Tool.Roll)Rotate(view.transform.forward,-delta.x*.35f*precision);
             else
             {
                 Quaternion local=Quaternion.FromToRotation(Ball(previousPointer),Ball(pointer));

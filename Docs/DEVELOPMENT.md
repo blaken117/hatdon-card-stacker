@@ -1,5 +1,9 @@
 # Development record
 
+## Prototype 011 — Hold to rotate
+
+Hold E during a card drag to temporarily use Rotate. The card keeps its midpoint, and the pointer reference resets at each transition so releasing E restores the selected tool without a jump. The Rotate icon shows the shortcut and highlights while it is active. The Esc catalogue includes a pending manual shot for the interaction.
+
 ## 2026-11-09 — Prototype 010: mouse movement in three axes
 
 Move now uses pointer motion for the two view-plane axes and the wheel for depth during the same grab. Wheel motion follows the pointer ray and rebases the drag plane at the accepted position. Translation uses the existing swept contact checks. Shift scales both adjustments. The dedicated Depth tool remains available, and the wheel zooms the camera outside a drag. The Esc shot catalogue reuses the normal-play preset for a repeatable manual recording.
