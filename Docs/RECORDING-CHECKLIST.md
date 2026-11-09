@@ -16,6 +16,8 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 
 - [ ] **Hold E to Rotate** (`p011-hold-to-rotate`). In the Esc preset, draw a card in Move mode. Keep left click held while pressing E to rotate, then release E and move again. Keep the HUD visible to show the keybind and mode highlight.
 
+- [ ] **Hold T to Tilt** (`p012-hold-to-tilt`). Use the Esc preset and keep the HUD visible. Grab a card in Move, hold T and move the mouse sideways, then release T and continue moving or scrolling during the same grab.
+
 ## In-game recording tools
 
 - **Esc:** open/close the admin menu. Opening cancels drag/camera gestures and pauses the simulation without releasing cards. Closing restores the previous playback/pause state.
@@ -24,7 +26,7 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 - **Space:** play/pause. For a prepared pickup cloud, release all 52 cards and start playback.
 - **. (period):** advance one 1/60-second frame while paused, using four 240Hz physics steps. A prepared pickup is released on the first step.
 - **Speed:** 0.25×, 0.5× or 1× simulation speed. The selected speed survives opening/closing the menu.
-- **F10 / Hide HUD:** toggle the four mode icons and selection markers for a clean take. Ghost hands stay visible when locked. Keep the HUD on when recording the icon feature.
+- **F10 / Hide HUD:** toggle the mode icons and selection markers for a clean take. Ghost hands stay visible when locked. Keep the HUD on when recording the icon feature. Use Prototype 011 if you need the original four-icon layout for the earlier Solid Movement Icons shot.
 - **Camera:** wide drop view, close table view, save/restore one view. The saved camera view persists with recording notes.
 - **Mark as recorded:** save the selected shot's status, optional clip path and UTC note timestamp. This is your checklist only; it neither starts recording nor verifies the clip.
 - **Save recording notes / Copy notes file path:** save clip-path/seed edits without changing a shot's status, or copy the local state-file location for the editing handoff. On this Windows setup the default folder is `C:\Users\User\AppData\LocalLow\Hatdon\Card Stacker\`.

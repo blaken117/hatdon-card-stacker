@@ -1,5 +1,9 @@
 # Development record
 
+## Prototype 012 — Hold to tilt
+
+Hold T during a drag for screen-relative tilt around the card centre. T takes priority if E is held at the same time. Release the key to return to the selected tool. The separate Depth button and Q shortcut were removed from player controls because Move handles depth with the wheel. Legacy scenarios can still access the old depth tool internally. The Esc catalogue includes a pending tilt shot.
+
 ## Prototype 011 — Hold to rotate
 
 Hold E during a card drag to temporarily use Rotate. The card keeps its midpoint, and the pointer reference resets at each transition so releasing E restores the selected tool without a jump. The Rotate icon shows the shortcut and highlights while it is active. The Esc catalogue includes a pending manual shot for the interaction.

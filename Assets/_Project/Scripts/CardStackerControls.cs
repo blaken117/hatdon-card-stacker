@@ -7,6 +7,7 @@ namespace Hatdon.CardStacker
     public sealed class CardStackerControls : MonoBehaviour
     {
         public const KeyCode HoldRotateKey = KeyCode.E;
+        public const KeyCode HoldTiltKey = KeyCode.T;
         public Rigidbody Selected { get; private set; }
         public Rigidbody[] Hands { get; private set; }
         public Vector3 Pivot { get; private set; }
@@ -146,11 +147,9 @@ namespace Hatdon.CardStacker
             }
             if (Input.GetMouseButton(0) && Manipulator.Dragging)
                 Manipulator.DragPointerTo(pointer, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift),
-                    Input.mouseScrollDelta.y, Input.GetKey(HoldRotateKey));
+                    Input.mouseScrollDelta.y, Input.GetKey(HoldRotateKey), Input.GetKey(HoldTiltKey));
             if (!Input.GetMouseButton(0) && Manipulator.Dragging) Manipulator.EndDrag();
             if (Input.GetKeyDown(KeyCode.W)) SetMouseTool(CardManipulator.Tool.Move,pointer);
-            if (Input.GetKeyDown(KeyCode.Q)) SetMouseTool(CardManipulator.Tool.Depth,pointer);
-            if (Input.GetKeyDown(KeyCode.T)) SetMouseTool(CardManipulator.Tool.Roll,pointer);
             if (Input.GetKeyDown(KeyCode.L) && Selected!=null) Placement.LockHand(System.Array.IndexOf(Hands,Selected));
             if (Input.GetKeyDown(KeyCode.Return)) Placement.CommitBoth();
             if (Input.GetKeyDown(KeyCode.R)) { Placement.ResetCards();Admin.SetPaused(false); }

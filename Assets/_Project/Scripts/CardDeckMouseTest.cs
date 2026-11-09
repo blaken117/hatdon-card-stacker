@@ -56,6 +56,14 @@ namespace Hatdon.CardStacker
                 Require(m.ActiveMode == CardManipulator.Tool.Move && first.position == beforeRotate,"Releasing E restores Move without a jump");
                 m.DragPointerTo(grab + Vector2.right * 25,false);
                 Require(Vector3.Distance(first.position,beforeRotate)>.002f,"The original grab still moves after releasing E");
+                Vector3 beforeTilt = first.position;
+                Quaternion untilted = first.rotation;
+                m.DragPointerTo(grab,false,holdTilt:true);
+                m.DragPointerTo(grab + Vector2.right * 30,false,holdTilt:true);
+                Quaternion expectedTilt = Quaternion.AngleAxis(-10.5f,Camera.main.transform.forward) * untilted;
+                Require(Quaternion.Angle(first.rotation,expectedTilt)<.1f && first.position == beforeTilt,"Holding T tilts around the view axis without moving the card");
+                m.DragPointerTo(grab,false);
+                Require(m.ActiveMode == CardManipulator.Tool.Move && first.position == beforeTilt,"Releasing T restores Move without a jump");
                 m.EndDrag();
                 Pose(first,position,rotation);
                 m.SetTool(CardManipulator.Tool.Depth);m.BeginPointerDrag(centre);m.DragPointerTo(centre+Vector2.up*20,false);m.EndDrag();

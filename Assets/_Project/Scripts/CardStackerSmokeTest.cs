@@ -40,7 +40,7 @@ namespace Hatdon.CardStacker
                         "Selection does not recenter the camera");
                 }
                 Require(!controls.IsOverInterface(new Vector2(50f / 1920f * Screen.width, Screen.height - 50f / 1080f * Screen.height)), "Former guide area is open to scene input");
-                for(int i=0;i<4;i++)
+                for(int i=0;i<CardModeToolbar.ButtonCount;i++)
                 {
                     Rect rect=CardModeToolbar.ButtonRect(i);
                     Require(controls.IsOverInterface(new Vector2(rect.center.x/1920*Screen.width,Screen.height-rect.center.y/1080*Screen.height)),"Only mode button hits block scene input");

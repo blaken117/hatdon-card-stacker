@@ -16,7 +16,7 @@
       "id": "p008-solid-icons",
       "title": "Solid Movement Icons",
       "preset": "normal",
-      "instructions": "Keep the HUD visible. Draw a card, click each of the four mode icons and show the active highlight. Make a short move, depth adjustment, rotation and twist. Shift gives fine control. Record with the four icons visible."
+      "instructions": "Use Prototype 011 for this historical four-icon shot. Keep the HUD visible, draw a card, and show each mode icon and its active highlight. Shift gives fine control."
     },
     {
       "id": "p009-recording-tools",
@@ -35,6 +35,12 @@
       "title": "Hold E to Rotate",
       "preset": "normal",
       "instructions": "Keep the HUD visible. Draw a card in Move mode. While holding left click, hold E and move the mouse to rotate. Release E while keeping left click held, then move the card again. Show the Hold E label and the mode highlight."
+    },
+    {
+      "id": "p012-hold-to-tilt",
+      "title": "Hold T to Tilt",
+      "preset": "normal",
+      "instructions": "Keep the three-button HUD visible. Draw a card in Move. Hold left click and T, then move the mouse sideways to tilt. Release T and move or scroll without releasing the card."
     }
   ]
 }

@@ -6,7 +6,7 @@ namespace Hatdon.CardStacker
     {
         public enum Tool { Move, Rotate, Depth, Roll }
         public Tool Mode { get; private set; }
-        public Tool ActiveMode => rotateHeld ? Tool.Rotate : Mode;
+        public Tool ActiveMode => heldTool ?? Mode;
         public bool Dragging { get; private set; }
         public bool ContactBlocked { get; private set; }
         public bool FineAdjustment { get; private set; }
@@ -25,7 +25,7 @@ namespace Hatdon.CardStacker
         private float contactUntil;
         private Plane pointerPlane;
         private Vector2 pointerCentre;
-        private bool rotateHeld;
+        private Tool? heldTool;
         private const float ArcballRadius=120;
         public float HandleSize => Mathf.Clamp(Vector3.Distance(view.transform.position, controls.Selected.position) * .14f, .018f, .2f);
 
@@ -49,7 +49,7 @@ namespace Hatdon.CardStacker
         }
 
         public void SetTool(Tool tool) { EndDrag(); Mode = tool; }
-        public void EndDrag() { Dragging = false; ActiveAxis = -1; FineAdjustment = false; rotateHeld = false; }
+        public void EndDrag() { Dragging = false; ActiveAxis = -1; FineAdjustment = false; heldTool = null; }
 
         public bool BeginPointerDrag(Vector2 pointer)
         {
@@ -84,13 +84,14 @@ namespace Hatdon.CardStacker
             return new Vector3(p.x,p.y,Mathf.Sqrt(1-p.sqrMagnitude));
         }
 
-        public void DragPointerTo(Vector2 pointer,bool fine,float depthScroll=0,bool holdRotate=false)
+        public void DragPointerTo(Vector2 pointer,bool fine,float depthScroll=0,bool holdRotate=false,bool holdTilt=false)
         {
             if(!Dragging || !controls.CanManipulate)return;
             FineAdjustment=fine;float precision=fine ? .1f : 1;
-            if (holdRotate != rotateHeld)
+            Tool? requestedTool = holdTilt ? Tool.Roll : holdRotate ? Tool.Rotate : null;
+            if (requestedTool != heldTool)
             {
-                rotateHeld = holdRotate;
+                heldTool = requestedTool;
                 previousPointer = pointer;
                 pointerCentre = view.WorldToScreenPoint(controls.Selected.position);
                 pointerPlane = new Plane(pointerPlane.normal, controls.Selected.position);

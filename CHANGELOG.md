@@ -1,5 +1,9 @@
 # Changelog
 
+## Hold to tilt
+
+- Hold T and move the mouse sideways to tilt during a drag. The toolbar now shows Move, Rotate and Tilt. The mouse wheel handles depth during Move.
+
 ## Hold to rotate
 
 - Hold E during a card drag to rotate, then release E to return to the selected tool. The Rotate icon displays the shortcut.
