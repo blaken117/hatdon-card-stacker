@@ -1,5 +1,10 @@
 # Changelog
 
+## Mouse movement in three axes — 2026-11-09
+
+- Use the wheel to move a card nearer or farther during a Move drag. Shift gives finer wheel adjustment as well as finer dragging.
+- Add a repeatable Mouse Movement in 3D shot to the Esc menu.
+
 ## Esc admin tools and manual recording workflow — 2026-11-06
 
 - Adopt user-recorded footage: retain feature notes and a shot checklist, remind the user before final editing, and stop automatic gameplay captures.

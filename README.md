@@ -30,7 +30,7 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | Space / . | Play/pause / advance one frame while paused |
 | F10 | Toggle HUD and selection markers for clean takes |
 | Tab | Switch hand; reopen its lock for adjustment |
-| First icon / W | Mouse drag moves across the camera view |
+| First icon / W | Drag across the camera view and scroll during the same drag to adjust depth |
 | Second icon / Q | Mouse up/down moves nearer/farther along the view direction |
 | Third icon / E | Mouse drag rotates around the card's fixed midpoint |
 | Fourth icon / T | Mouse left/right twists around the viewing axis |
@@ -41,7 +41,7 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | F8 | Clear the table and replay a fresh random 52-card drop test |
 | Right-drag | Orbit selected card, or table centre |
 | Middle-drag | Pan |
-| Mouse wheel | Zoom within near/far limits |
+| Mouse wheel outside a card drag | Zoom within near/far limits |
 | F | Focus selected card, or table centre |
 | Home | Restore initial camera |
 

@@ -82,7 +82,7 @@ namespace Hatdon.CardStacker
             return new Vector3(p.x,p.y,Mathf.Sqrt(1-p.sqrMagnitude));
         }
 
-        public void DragPointerTo(Vector2 pointer,bool fine)
+        public void DragPointerTo(Vector2 pointer,bool fine,float depthScroll=0)
         {
             if(!Dragging || !controls.CanManipulate)return;
             FineAdjustment=fine;float precision=fine ? .1f : 1;
@@ -92,6 +92,14 @@ namespace Hatdon.CardStacker
                 Ray a=view.ScreenPointToRay(previousPointer),b=view.ScreenPointToRay(pointer);
                 if(pointerPlane.Raycast(a,out float da) && pointerPlane.Raycast(b,out float db))
                     Translate((b.GetPoint(db)-a.GetPoint(da))*precision);
+                if (Mathf.Abs(depthScroll) > .0001f)
+                {
+                    float distance = Vector3.Distance(view.transform.position, controls.Selected.position);
+                    float metresPerNotch = Mathf.Clamp(distance * .05f, .005f, .04f);
+                    // Follow the grab ray so scrolling does not pull the card sideways on screen.
+                    Translate(-b.direction * (depthScroll * metresPerNotch * precision));
+                    pointerPlane = new Plane(pointerPlane.normal, controls.Selected.position);
+                }
             }
             else if(Mode==Tool.Depth)
             {

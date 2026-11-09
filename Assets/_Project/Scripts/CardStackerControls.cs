@@ -144,7 +144,7 @@ namespace Hatdon.CardStacker
                 else{SelectCard(hovered);if(CanManipulate){Manipulator.BeginPointerDrag(pointer);orbiting=panning=false;}}
             }
             if (Input.GetMouseButton(0) && Manipulator.Dragging)
-                Manipulator.DragPointerTo(pointer, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+                Manipulator.DragPointerTo(pointer, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift), Input.mouseScrollDelta.y);
             if (!Input.GetMouseButton(0) && Manipulator.Dragging) Manipulator.EndDrag();
             if (Input.GetKeyDown(KeyCode.W)) SetMouseTool(CardManipulator.Tool.Move,pointer);
             if (Input.GetKeyDown(KeyCode.Q)) SetMouseTool(CardManipulator.Tool.Depth,pointer);

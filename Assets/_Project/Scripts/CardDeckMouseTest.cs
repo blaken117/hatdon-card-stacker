@@ -38,6 +38,16 @@ namespace Hatdon.CardStacker
                 Pose(first,position,rotation);m.BeginPointerDrag(centre);m.DragPointerTo(centre+new Vector2(25,15),true);m.EndDrag();
                 Require(Mathf.Abs((first.position-position).magnitude/normal.magnitude-.1f)<.002f,"Shift gives 10x fine movement");
                 Pose(first,position,rotation);
+                m.BeginPointerDrag(centre);
+                m.DragPointerTo(centre,false,1);
+                Vector3 afterScroll=first.position;
+                Require(Vector3.Dot(afterScroll-position,Camera.main.transform.forward)<-.005f,"Wheel brings a held card nearer in Move mode");
+                m.DragPointerTo(centre,false);
+                Require(Vector3.Distance(first.position,afterScroll)<.000001f,"Holding still after scrolling does not jump");
+                m.DragPointerTo(centre+new Vector2(25,15),false);
+                Require(Vector3.Distance(first.position,afterScroll)>.002f && Mathf.Abs(Vector3.Dot(first.position-afterScroll,Camera.main.transform.forward))<.00001f,"The same grab continues moving across the new depth plane");
+                m.EndDrag();
+                Pose(first,position,rotation);
                 m.SetTool(CardManipulator.Tool.Depth);m.BeginPointerDrag(centre);m.DragPointerTo(centre+Vector2.up*20,false);m.EndDrag();
                 Vector3 depth=first.position-position;
                 Require(depth.magnitude>.001f && Vector3.Cross(depth,Camera.main.transform.forward).magnitude<.00001f,"Q depth follows camera forward");

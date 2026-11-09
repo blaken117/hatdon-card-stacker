@@ -23,6 +23,12 @@
       "title": "Admin Recording Tools",
       "preset": "none",
       "instructions": "Optional dev-log shot: open Esc, show 52 Card Pickup in the shot list, prepare it, then close the menu and press Space. Show how a feature can be replayed for recording. Capture this menu only when explaining the tools."
+    },
+    {
+      "id": "p010-mouse-movement",
+      "title": "Mouse Movement in 3D",
+      "preset": "normal",
+      "instructions": "Draw a card and keep Move selected. Hold the left button and drag sideways and up or down. Scroll in both directions while still holding the card, then keep dragging at the new depth. Repeat with Shift for a precise adjustment."
     }
   ]
 }

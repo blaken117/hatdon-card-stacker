@@ -12,6 +12,7 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 - [ ] **Ghost Hands** (`p008-ghost-hands`): Prepare the hand preset. Record both faint full hands coming down from above differently tilted cards. Orbit slowly, then press **Enter** to release both cards and show the ghosts disappearing. The preset demonstrates visuals; it is not a balanced structure.
 - [ ] **Solid Movement Icons** (`p008-solid-icons`): Prepare normal gameplay with the HUD visible. Draw a card, click all four icons, and demonstrate move/depth/rotation/twist with active-mode highlighting and a fine adjustment.
 - [ ] **Admin Recording Tools** (`p009-recording-tools`, optional): Show Esc → 52 Card Pickup → prepare → close → Space. This is a tools/workflow shot only if useful to the episode.
+- [ ] **Mouse Movement in 3D** (`p010-mouse-movement`). Prepare the shot in Esc, draw one card and stay in Move. Hold left click, drag across the view, scroll nearer and farther, and continue dragging at the new depth. Repeat with Shift for a precise move.
 
 ## In-game recording tools
 

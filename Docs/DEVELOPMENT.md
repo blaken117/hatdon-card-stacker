@@ -1,5 +1,9 @@
 # Development record
 
+## 2026-11-09 — Prototype 010: mouse movement in three axes
+
+Move now uses pointer motion for the two view-plane axes and the wheel for depth during the same grab. Wheel motion follows the pointer ray and rebases the drag plane at the accepted position. Translation uses the existing swept contact checks. Shift scales both adjustments. The dedicated Depth tool remains available, and the wheel zooms the camera outside a drag. The Esc shot catalogue reuses the normal-play preset for a repeatable manual recording.
+
 ## 2026-11-06 — Prototype 009: user-operated recording tools
 
 User changed the workflow: do not record gameplay footage automatically. Keep feature notes, provide tools in an Esc admin menu, and remind them what to record before making the final video. This overrides the previous expectation of automated footage per milestone. No new gameplay recording belongs to this milestone. Source/build/test preservation continues; still screenshots are allowed for verification.
