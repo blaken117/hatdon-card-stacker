@@ -34,13 +34,19 @@
       "id": "p011-hold-to-rotate",
       "title": "Hold E to Rotate",
       "preset": "normal",
-      "instructions": "Keep the HUD visible. Draw a card in Move mode. While holding left click, hold E and move the mouse to rotate. Release E while keeping left click held, then move the card again. Show the Hold E label and the mode highlight."
+      "instructions": "Use Prototype 011 for the original E shortcut. Keep the HUD visible. Draw a card in Move mode. While holding left click, hold E and move the mouse to rotate. Release E while keeping left click held, then move the card again."
     },
     {
       "id": "p012-hold-to-tilt",
       "title": "Hold T to Tilt",
       "preset": "normal",
       "instructions": "Keep the three-button HUD visible. Draw a card in Move. Hold left click and T, then move the mouse sideways to tilt. Release T and move or scroll without releasing the card."
+    },
+    {
+      "id": "p013-rotation-and-reset",
+      "title": "Rotate with R and Click to Reset",
+      "preset": "normal",
+      "instructions": "With the HUD visible, grab a card and hold R to rotate. Hold T and move sideways to tilt. Release the drag and click Reset cards to show the table clearing and the deck refilling."
     }
   ]
 }

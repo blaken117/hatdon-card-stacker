@@ -5,12 +5,13 @@ namespace Hatdon.CardStacker
     public sealed class CardModeToolbar : MonoBehaviour
     {
         private static readonly CardManipulator.Tool[] Modes = { CardManipulator.Tool.Move, CardManipulator.Tool.Rotate, CardManipulator.Tool.Roll };
-        public static int ButtonCount => Modes.Length;
+        public static int ButtonCount => Modes.Length + 1;
         private readonly Texture2D[] icons = new Texture2D[Modes.Length];
         private CardStackerControls controls;
         private GUIStyle keyLabel;
+        private GUIStyle resetButton;
 
-        public static Rect ButtonRect(int index) => new Rect(752 + index * 144, 924, 128, 128);
+        public static Rect ButtonRect(int index) => new Rect(680 + index * 144, 924, 128, 128);
         public static bool Contains(Vector2 screenPoint)
         {
             Vector2 point = new Vector2(screenPoint.x * 1920 / Screen.width, (Screen.height - screenPoint.y) * 1080 / Screen.height);
@@ -22,16 +23,17 @@ namespace Hatdon.CardStacker
         {
             controls = owner;
             string[] names={"move","rotate","twist"};
-            for (int i = 0; i < ButtonCount; i++) icons[i] = Resources.Load<Texture2D>("UIIcons/"+names[i]);
+            for (int i = 0; i < Modes.Length; i++) icons[i] = Resources.Load<Texture2D>("UIIcons/"+names[i]);
         }
 
         private void OnGUI()
         {
             if (controls == null || (controls.Admin!=null && (controls.Admin.IsOpen || controls.Admin.HideHud))) return;
             keyLabel ??= new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 17, fontStyle = FontStyle.Bold };
+            resetButton ??= new GUIStyle(GUI.skin.button) { fontSize = 17, fontStyle = FontStyle.Bold };
             Matrix4x4 old = GUI.matrix;Color oldColor = GUI.color;
             GUI.matrix = Matrix4x4.Scale(new Vector3(Screen.width / 1920f, Screen.height / 1080f, 1));
-            for (int i = 0; i < ButtonCount; i++)
+            for (int i = 0; i < Modes.Length; i++)
             {
                 Rect rect = ButtonRect(i);
                 if (GUI.Button(rect, GUIContent.none, GUIStyle.none)) controls.SetHandlingMode(Modes[i]);
@@ -51,7 +53,9 @@ namespace Hatdon.CardStacker
                 else GUI.DrawTexture(new Rect(rect.x+20,rect.y+20,88,88), icons[i]);
                 if (active) GUI.DrawTexture(new Rect(rect.x+16,rect.yMax-7,96,4),Texture2D.whiteTexture);
             }
-            GUI.color = oldColor;GUI.matrix = old;
+            GUI.color = oldColor;
+            if (GUI.Button(ButtonRect(Modes.Length), "Reset cards", resetButton)) controls.ResetTable();
+            GUI.matrix = old;
         }
 
     }

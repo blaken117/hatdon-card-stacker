@@ -97,7 +97,9 @@ namespace Hatdon.CardStacker
                 Require(first.gameObject.activeInHierarchy && second.gameObject.activeInHierarchy && !first.isKinematic && !second.isKinematic,"Drawing the next card does not reset existing structure");
                 m.EndDrag();c.SelectCard(third);Pose(third,new Vector3(.1f,.15f,0),Quaternion.identity);
                 Require(!m.Translate(Vector3.down*.12f),"Newly drawn card respects already placed card contacts");
-                s.ResetCards();Require(c.Deck.Remaining==52 && !s.HasCard(0) && !s.HasCard(1) && FindObjectsByType<Rigidbody>(FindObjectsSortMode.None).Length==0,"Reset clears table and refills deck");
+                c.Admin.SetPaused(true);
+                c.ResetTable();
+                Require(!c.Admin.Paused && c.Deck.Remaining==52 && !s.HasCard(0) && !s.HasCard(1) && FindObjectsByType<Rigidbody>(FindObjectsSortMode.None).Length==0,"Reset clears table, refills deck and resumes play");
                 Debug.Log("HATDON_DECK_MOUSE_TEST_OK: empty start, deck picking, single draw, 2-hand cap, plane/depth/fine/arcball/twist, fixed rotation pivot, continuing after commit, placed contact and reset passed.");
                 Application.Quit(0);
             }

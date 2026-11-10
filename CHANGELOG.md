@@ -1,5 +1,9 @@
 # Changelog
 
+## Rotation and reset controls
+
+- Hold R to rotate. Click Reset cards to clear the table and refill the deck. Hold T to tilt.
+
 ## Hold to tilt
 
 - Hold T and move the mouse sideways to tilt during a drag. The toolbar now shows Move, Rotate and Tilt. The mouse wheel handles depth during Move.

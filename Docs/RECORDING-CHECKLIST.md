@@ -17,6 +17,7 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 - [ ] **Hold E to Rotate** (`p011-hold-to-rotate`). In the Esc preset, draw a card in Move mode. Keep left click held while pressing E to rotate, then release E and move again. Keep the HUD visible to show the keybind and mode highlight.
 
 - [ ] **Hold T to Tilt** (`p012-hold-to-tilt`). Use the Esc preset and keep the HUD visible. Grab a card in Move, hold T and move the mouse sideways, then release T and continue moving or scrolling during the same grab.
+- [ ] **Rotate with R and Click to Reset** (`p013-rotation-and-reset`). Use the Esc preset to show Hold R rotating and Hold T tilting during a drag. Click Reset cards to clear the table. Use Prototype 011 for the earlier Hold E shot.
 
 ## In-game recording tools
 

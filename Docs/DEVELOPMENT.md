@@ -1,5 +1,9 @@
 # Development record
 
+## Prototype 013 — Rotation and reset controls
+
+R now activates rotation during a drag. The HUD provides a clickable Reset cards button and the Esc panel keeps its Reset table button. Both use the same reset action. The Esc catalogue includes a pending shot showing the new controls.
+
 ## Prototype 012 — Hold to tilt
 
 Hold T during a drag for screen-relative tilt around the card centre. T takes priority if E is held at the same time. Release the key to return to the selected tool. The separate Depth button and Q shortcut were removed from player controls because Move handles depth with the wheel. Legacy scenarios can still access the old depth tool internally. The Esc catalogue includes a pending tilt shot.

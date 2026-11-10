@@ -6,7 +6,7 @@ namespace Hatdon.CardStacker
 {
     public sealed class CardStackerControls : MonoBehaviour
     {
-        public const KeyCode HoldRotateKey = KeyCode.E;
+        public const KeyCode HoldRotateKey = KeyCode.R;
         public const KeyCode HoldTiltKey = KeyCode.T;
         public Rigidbody Selected { get; private set; }
         public Rigidbody[] Hands { get; private set; }
@@ -152,7 +152,6 @@ namespace Hatdon.CardStacker
             if (Input.GetKeyDown(KeyCode.W)) SetMouseTool(CardManipulator.Tool.Move,pointer);
             if (Input.GetKeyDown(KeyCode.L) && Selected!=null) Placement.LockHand(System.Array.IndexOf(Hands,Selected));
             if (Input.GetKeyDown(KeyCode.Return)) Placement.CommitBoth();
-            if (Input.GetKeyDown(KeyCode.R)) { Placement.ResetCards();Admin.SetPaused(false); }
             if (Input.GetKeyDown(KeyCode.F8)) { Pickup.StartDrop(System.Environment.TickCount);FramePickup();Admin.SetPaused(false); }
             if (Input.GetKeyDown(KeyCode.Tab)) SwitchHand();
             if (Input.GetKeyDown(KeyCode.F)) FocusSelection();
@@ -178,6 +177,11 @@ namespace Hatdon.CardStacker
             if(resume && CanManipulate)Manipulator.BeginPointerDrag(pixel);
         }
         public void SetHandlingMode(CardManipulator.Tool mode) => SetMouseTool(mode,Input.mousePosition);
+        public void ResetTable()
+        {
+            Placement.ResetCards();
+            Admin.SetPaused(false);
+        }
         public void CancelGestures(){orbiting=panning=false;hovered=null;Manipulator.EndDrag();lastPointer=Input.mousePosition;}
         public void SetCameraView(Vector3 position,Vector3 target){Pivot=target;transform.position=position;transform.LookAt(target);KeepAboveTable();}
         public void RestoreCameraView(Vector3 position,Quaternion rotation,Vector3 pivot){Pivot=pivot;transform.SetPositionAndRotation(position,rotation);KeepAboveTable();}
