@@ -1,5 +1,9 @@
 # Changelog
 
+## Click to commit a pair
+
+- The Commit pair button releases both held cards once both hands are locked.
+
 ## Rotation and reset controls
 
 - Hold R to rotate. Click Reset cards to clear the table and refill the deck. Hold T to tilt.

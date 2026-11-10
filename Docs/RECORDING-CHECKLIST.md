@@ -19,6 +19,8 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 - [ ] **Hold T to Tilt** (`p012-hold-to-tilt`). Use the Esc preset and keep the HUD visible. Grab a card in Move, hold T and move the mouse sideways, then release T and continue moving or scrolling during the same grab.
 - [ ] **Rotate with R and Click to Reset** (`p013-rotation-and-reset`). Use the Esc preset to show Hold R rotating and Hold T tilting during a drag. Click Reset cards to clear the table. Use Prototype 011 for the earlier Hold E shot.
 
+- [ ] **Click to Commit a Pair** (`p014-commit-pair-button`). Prepare the Esc preset and keep the HUD visible. Position two cards, lock each with L, and click Commit pair when it becomes available.
+
 ## In-game recording tools
 
 - **Esc:** open/close the admin menu. Opening cancels drag/camera gestures and pauses the simulation without releasing cards. Closing restores the previous playback/pause state.

@@ -5,13 +5,13 @@ namespace Hatdon.CardStacker
     public sealed class CardModeToolbar : MonoBehaviour
     {
         private static readonly CardManipulator.Tool[] Modes = { CardManipulator.Tool.Move, CardManipulator.Tool.Rotate, CardManipulator.Tool.Roll };
-        public static int ButtonCount => Modes.Length + 1;
+        public static int ButtonCount => Modes.Length + 2;
         private readonly Texture2D[] icons = new Texture2D[Modes.Length];
         private CardStackerControls controls;
         private GUIStyle keyLabel;
-        private GUIStyle resetButton;
+        private GUIStyle actionButton;
 
-        public static Rect ButtonRect(int index) => new Rect(680 + index * 144, 924, 128, 128);
+        public static Rect ButtonRect(int index) => new Rect(608 + index * 144, 924, 128, 128);
         public static bool Contains(Vector2 screenPoint)
         {
             Vector2 point = new Vector2(screenPoint.x * 1920 / Screen.width, (Screen.height - screenPoint.y) * 1080 / Screen.height);
@@ -30,7 +30,7 @@ namespace Hatdon.CardStacker
         {
             if (controls == null || (controls.Admin!=null && (controls.Admin.IsOpen || controls.Admin.HideHud))) return;
             keyLabel ??= new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 17, fontStyle = FontStyle.Bold };
-            resetButton ??= new GUIStyle(GUI.skin.button) { fontSize = 17, fontStyle = FontStyle.Bold };
+            actionButton ??= new GUIStyle(GUI.skin.button) { fontSize = 17, fontStyle = FontStyle.Bold };
             Matrix4x4 old = GUI.matrix;Color oldColor = GUI.color;
             GUI.matrix = Matrix4x4.Scale(new Vector3(Screen.width / 1920f, Screen.height / 1080f, 1));
             for (int i = 0; i < Modes.Length; i++)
@@ -54,7 +54,11 @@ namespace Hatdon.CardStacker
                 if (active) GUI.DrawTexture(new Rect(rect.x+16,rect.yMax-7,96,4),Texture2D.whiteTexture);
             }
             GUI.color = oldColor;
-            if (GUI.Button(ButtonRect(Modes.Length), "Reset cards", resetButton)) controls.ResetTable();
+            bool wasEnabled = GUI.enabled;
+            GUI.enabled = wasEnabled && controls.Placement.BothLocked;
+            if (GUI.Button(ButtonRect(Modes.Length), "Commit pair", actionButton)) controls.Placement.CommitBoth();
+            GUI.enabled = wasEnabled;
+            if (GUI.Button(ButtonRect(Modes.Length + 1), "Reset cards", actionButton)) controls.ResetTable();
             GUI.matrix = old;
         }
 

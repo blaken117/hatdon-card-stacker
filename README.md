@@ -35,7 +35,7 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | Third icon / hold T during a drag | Move the mouse left/right to tilt around the viewing axis. Release T to return to the selected tool. |
 | Shift while dragging | One-tenth movement or rotation sensitivity |
 | L | Lock a hand at its current pose; still held |
-| Enter | Release both cards when both hands are locked |
+| Commit pair button / Enter | Release both cards when both hands are locked |
 | Reset cards button | Clear all cards and refill the deck |
 | F8 | Clear the table and replay a fresh random 52-card drop test |
 | Right-drag | Orbit selected card, or table centre |

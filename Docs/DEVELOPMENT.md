@@ -1,5 +1,9 @@
 # Development record
 
+## Prototype 014 — Commit pair button
+
+The toolbar enables Commit pair when both hands are locked. It uses the same release and overlap checks as Enter. The Esc catalogue includes a pending shot demonstrating the button.
+
 ## Prototype 013 — Rotation and reset controls
 
 R now activates rotation during a drag. The HUD provides a clickable Reset cards button and the Esc panel keeps its Reset table button. Both use the same reset action. The Esc catalogue includes a pending shot showing the new controls.

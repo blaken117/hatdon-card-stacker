@@ -47,6 +47,12 @@
       "title": "Rotate with R and Click to Reset",
       "preset": "normal",
       "instructions": "With the HUD visible, grab a card and hold R to rotate. Hold T and move sideways to tilt. Release the drag and click Reset cards to show the table clearing and the deck refilling."
+    },
+    {
+      "id": "p014-commit-pair-button",
+      "title": "Click to Commit a Pair",
+      "preset": "normal",
+      "instructions": "Draw and position two cards. Press L to lock each hand. Show Commit pair becoming available when the second hand locks, then click it to release both cards together."
     }
   ]
 }
