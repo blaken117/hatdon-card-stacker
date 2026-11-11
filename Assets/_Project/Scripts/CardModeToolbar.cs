@@ -5,13 +5,13 @@ namespace Hatdon.CardStacker
     public sealed class CardModeToolbar : MonoBehaviour
     {
         private static readonly CardManipulator.Tool[] Modes = { CardManipulator.Tool.Move, CardManipulator.Tool.Rotate, CardManipulator.Tool.Roll };
-        public static int ButtonCount => Modes.Length + 2;
+        public static int ButtonCount => Modes.Length + 1;
         private readonly Texture2D[] icons = new Texture2D[Modes.Length];
         private CardStackerControls controls;
         private GUIStyle keyLabel;
         private GUIStyle actionButton;
 
-        public static Rect ButtonRect(int index) => new Rect(608 + index * 144, 924, 128, 128);
+        public static Rect ButtonRect(int index) => new Rect(680 + index * 144, 924, 128, 128);
         public static bool Contains(Vector2 screenPoint)
         {
             Vector2 point = new Vector2(screenPoint.x * 1920 / Screen.width, (Screen.height - screenPoint.y) * 1080 / Screen.height);
@@ -54,11 +54,8 @@ namespace Hatdon.CardStacker
                 if (active) GUI.DrawTexture(new Rect(rect.x+16,rect.yMax-7,96,4),Texture2D.whiteTexture);
             }
             GUI.color = oldColor;
-            bool wasEnabled = GUI.enabled;
-            GUI.enabled = wasEnabled && controls.Placement.BothLocked;
-            if (GUI.Button(ButtonRect(Modes.Length), "Commit pair", actionButton)) controls.Placement.CommitBoth();
-            GUI.enabled = wasEnabled;
-            if (GUI.Button(ButtonRect(Modes.Length + 1), "Reset cards", actionButton)) controls.ResetTable();
+            if (GUI.Button(ButtonRect(Modes.Length), "Reset cards", actionButton)) controls.ResetTable();
+            GUI.Label(new Rect(630, 887, 660, 28), controls.Placement.Status, keyLabel);
             GUI.matrix = old;
         }
 

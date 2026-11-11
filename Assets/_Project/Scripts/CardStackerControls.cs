@@ -148,12 +148,13 @@ namespace Hatdon.CardStacker
             if (Input.GetMouseButton(0) && Manipulator.Dragging)
                 Manipulator.DragPointerTo(pointer, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift),
                     Input.mouseScrollDelta.y, Input.GetKey(HoldRotateKey), Input.GetKey(HoldTiltKey));
-            if (!Input.GetMouseButton(0) && Manipulator.Dragging) Manipulator.EndDrag();
+            if (!Input.GetMouseButton(0) && Manipulator.Dragging)
+            {
+                Manipulator.EndDrag();
+                if (Input.GetMouseButtonUp(0) && CanManipulate) Placement.FinishPlacement();
+            }
             if (Input.GetKeyDown(KeyCode.W)) SetMouseTool(CardManipulator.Tool.Move,pointer);
-            if (Input.GetKeyDown(KeyCode.L) && Selected!=null) Placement.LockHand(System.Array.IndexOf(Hands,Selected));
-            if (Input.GetKeyDown(KeyCode.Return)) Placement.CommitBoth();
             if (Input.GetKeyDown(KeyCode.F8)) { Pickup.StartDrop(System.Environment.TickCount);FramePickup();Admin.SetPaused(false); }
-            if (Input.GetKeyDown(KeyCode.Tab)) SwitchHand();
             if (Input.GetKeyDown(KeyCode.F)) FocusSelection();
             if (Input.GetKeyDown(KeyCode.Home)) ResetView();
             if (Input.GetMouseButtonDown(1) && !overUI && !Manipulator.Dragging)

@@ -100,6 +100,19 @@ namespace Hatdon.CardStacker
                 c.Admin.SetPaused(true);
                 c.ResetTable();
                 Require(!c.Admin.Paused && c.Deck.Remaining==52 && !s.HasCard(0) && !s.HasCard(1) && FindObjectsByType<Rigidbody>(FindObjectsSortMode.None).Length==0,"Reset clears table, refills deck and resumes play");
+                for (int pair = 0; pair < 2; pair++)
+                {
+                    var firstCard = c.Deck.Draw();
+                    Pose(firstCard,new Vector3(-.12f,.07f,pair*.12f),Quaternion.identity);
+                    Require(!s.FinishPlacement() && firstCard.isKinematic && s.CanAdjust(firstCard),"The first placement waits and remains adjustable");
+                    var secondCard = c.Deck.Draw();
+                    Pose(secondCard,firstCard.position,firstCard.rotation);
+                    Require(!s.FinishPlacement() && firstCard.isKinematic && secondCard.isKinematic,"An overlapping pair stays in place for adjustment");
+                    Pose(secondCard,new Vector3(.12f,.07f,pair*.12f),Quaternion.identity);
+                    Require(s.FinishPlacement() && !firstCard.isKinematic && !secondCard.isKinematic,"A valid pair releases without either card being locked");
+                    Require(c.Deck.Remaining==50-pair*2,"Pair release allows the next draw without refilling the deck");
+                }
+                Debug.Log("HATDON_AUTO_PAIR_OK: first card waits, overlap can be corrected, two successive pairs release.");
                 Debug.Log("HATDON_DECK_MOUSE_TEST_OK: empty start, deck picking, single draw, 2-hand cap, plane/depth/fine/arcball/twist, fixed rotation pivot, continuing after commit, placed contact and reset passed.");
                 Application.Quit(0);
             }

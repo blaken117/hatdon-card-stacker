@@ -97,7 +97,6 @@ namespace Hatdon.CardStacker
                 if(!int.TryParse(seedText,out int seed)){notice="Enter a whole-number seed first.";return;}
                 PreparePickup(seed);
             }
-            else if(shot.preset=="hands")PrepareHands();
             else if(shot.preset=="normal"){controls.Placement.ResetCards();controls.ResetView();HideHud=false;SetPaused(false);}
             SetOpen(false);
         }
@@ -183,7 +182,7 @@ namespace Hatdon.CardStacker
             note.filePath=GUI.TextField(new Rect(706,751,594,36),note.filePath ?? "",4096,input);
             if(Button(1314,747,236,note.recorded ? "Mark pending again" : "Mark as recorded"))MarkRecorded(active.id,!note.recorded,note.filePath);
             GUI.Label(new Rect(366,822,1180,52),notice,text);
-            GUI.Label(new Rect(366,893,1180,50),"Outside menu: Space play/pause · . single frame · F10 HUD · Esc menu · L lock · Tab hand · Enter release · Hold R rotate · Hold T tilt",small);
+            GUI.Label(new Rect(366,893,1180,50),"Outside menu: Space play/pause · . single frame · F10 HUD · Esc menu · Hold R rotate · Hold T tilt",small);
             GUI.color=color;GUI.matrix=matrix;
         }
         private void OnDestroy(){Time.timeScale=1;}

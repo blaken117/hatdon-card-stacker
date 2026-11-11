@@ -1,5 +1,9 @@
 # Development record
 
+## Prototype 015 — Automatic two-card steps
+
+Mouse release places the first card and releases both cards once the pair is ready. The existing overlap check keeps an invalid pair staged for adjustment. Cancelled drags do not trigger release. Normal play uses automatic steps and the HUD prompts the next action. The Esc catalogue includes a pending shot that shows two successive pairs.
+
 ## Prototype 014 — Commit pair button
 
 The toolbar enables Commit pair when both hands are locked. It uses the same release and overlap checks as Enter. The Esc catalogue includes a pending shot demonstrating the button.

@@ -1,5 +1,9 @@
 # Changelog
 
+## Automatic two-card steps
+
+- The first card waits in position. Letting go with both cards positioned releases the pair and opens the next step.
+
 ## Click to commit a pair
 
 - The Commit pair button releases both held cards once both hands are locked.

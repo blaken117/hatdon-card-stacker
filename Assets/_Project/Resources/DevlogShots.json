@@ -9,8 +9,8 @@
     {
       "id": "p008-ghost-hands",
       "title": "Ghost Hands",
-      "preset": "hands",
-      "instructions": "Show both low-opacity hands pointing down from above differently tilted cards. Orbit slowly to show their shape and direction. Press Enter to release both cards and show the hands disappearing. This preset stages a visual example, not a balanced structure."
+      "preset": "none",
+      "instructions": "Use Prototype 014 and its Ghost Hands preset for this historical shot. Show both hands, then press Enter to release the cards."
     },
     {
       "id": "p008-solid-icons",
@@ -52,7 +52,13 @@
       "id": "p014-commit-pair-button",
       "title": "Click to Commit a Pair",
       "preset": "normal",
-      "instructions": "Draw and position two cards. Press L to lock each hand. Show Commit pair becoming available when the second hand locks, then click it to release both cards together."
+      "instructions": "Use Prototype 014 for this historical shot. Position two cards, lock each with L, then click Commit pair."
+    },
+    {
+      "id": "p015-automatic-pairs",
+      "title": "Automatic Two-Card Steps",
+      "preset": "normal",
+      "instructions": "Draw and position the first card, then let go. Show it waiting in place. Draw and position the second, then let go to release both. Place a second pair while the earlier cards remain on the table."
     }
   ]
 }

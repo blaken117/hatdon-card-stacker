@@ -6,7 +6,7 @@ namespace Hatdon.CardStacker
     {
         public bool IsCommitted { get; private set; }
         public bool BothLocked => HasCard(0) && HasCard(1) && locked[0] && locked[1];
-        public string Status { get; private set; }="Drag one card from the deck into a free hand.";
+        public string Status { get; private set; }="Drag the first card from the deck.";
         public const float CardMass=.0018f,CardThickness=.00032f,Step=1f/240f;
         private CardStackerControls controls;
         private readonly bool[] locked=new bool[2];
@@ -63,7 +63,7 @@ namespace Hatdon.CardStacker
         public Rigidbody DrawCard(int preferred,Vector3 position,Quaternion rotation,int number)
         {
             int i=FreeHand(preferred);
-            if(i<0){Status="Both hands are full. Lock and commit this pair first.";return null;}
+            if(i<0){Status="Adjust either card, then let go to release the pair.";return null;}
             Rigidbody card;
             if(!drawn[i] && controls.Hands[i]==originals[i])card=originals[i];
             else
@@ -77,7 +77,7 @@ namespace Hatdon.CardStacker
             card.position=position;card.rotation=rotation;card.name="Drawn card "+(number+1);
             CardTableArt.StyleDrawnCard(card,number);
             drawn[i]=true;locked[i]=false;IsCommitted=false;Physics.SyncTransforms();
-            controls.SelectCard(card);Status=(i==0 ? "Left" : "Right")+" hand holding a card. Drag to adjust; L locks it.";
+            controls.SelectCard(card);
             return card;
         }
 
@@ -85,7 +85,8 @@ namespace Hatdon.CardStacker
         {
             int i=System.Array.IndexOf(controls.Hands,card);
             if(i<0 || !HasCard(i))return;
-            locked[i]=false;Status=(i==0 ? "Left" : "Right")+" hand adjusting. Lock it when ready.";
+            locked[i]=false;
+            Status=HasCard(1-i) ? "Let go to release the pair." : "Position the first card, then draw the second.";
         }
         public Rigidbody CreateDropCard(Vector3 position,Quaternion rotation,int number)
         {
@@ -112,13 +113,28 @@ namespace Hatdon.CardStacker
         {
             if(IsCommitted)return false;
             if(!BothLocked){Status="Fill and lock both hands before committing.";return false;}
+            return ReleasePair();
+        }
+
+        public bool FinishPlacement()
+        {
+            if (!HasCard(0) || !HasCard(1))
+            {
+                Status = "First card placed. Draw the second card.";
+                return false;
+            }
+            return ReleasePair();
+        }
+
+        private bool ReleasePair()
+        {
             Physics.SyncTransforms();
             foreach(var card in controls.Hands)
             {
                 var shape=card.GetComponent<Collider>();
                 foreach(var other in FindObjectsByType<Collider>(FindObjectsSortMode.None))
                     if(other!=shape && other.enabled && !other.isTrigger && Physics.ComputePenetration(shape,card.position,card.rotation,other,ColliderPosition(other),ColliderRotation(other),out _,out float depth) && depth>.000005f)
-                    {Status="Cards overlap. Adjust the placement before committing.";return false;}
+                    {Status="Cards overlap. Adjust either card and let go again.";return false;}
             }
             controls.Manipulator.EndDrag();
             foreach(var card in controls.Hands)
@@ -127,7 +143,7 @@ namespace Hatdon.CardStacker
                 card.linearVelocity=Vector3.zero;card.angularVelocity=Vector3.zero;card.WakeUp();
             }
             locked[0]=locked[1]=false;IsCommitted=true;controls.PairCommitted();
-            Status="Pair released. Draw the next cards; the existing structure keeps simulating.";
+            Status=controls.Deck.Remaining > 0 ? "Pair released. Draw the next card." : "Deck empty. Reset cards to start over.";
             return true;
         }
 

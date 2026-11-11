@@ -1,10 +1,10 @@
 # Hatdon Card Stacker
 
-A Unity experiment about building structures from playing cards using two virtual hands and precise positioning.
+A Unity experiment about building structures by positioning playing cards in pairs.
 
 ## Status
 
-Deck and mouse-control prototype with a minimal four-icon HUD and orientation-dependent air resistance. Draw cards into two free hands, position and lock each, then commit both into gravity and contact physics. Draw the next pair while earlier cards remain on the table. This is not a finished game.
+Draw and position the first card, then let go to leave it in place. Draw and position the second card. Letting go releases the pair into gravity and contact physics. Draw the next pair while earlier cards remain on the table.
 
 ## Open the project
 
@@ -29,13 +29,11 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | Esc | Open/close the paused admin and recording-tools menu |
 | Space / . | Play/pause / advance one frame while paused |
 | F10 | Toggle HUD and selection markers for clean takes |
-| Tab | Switch hand; reopen its lock for adjustment |
 | First icon / W | Drag across the camera view and scroll during the same drag to adjust depth |
 | Second icon / hold R during a drag | Rotate around the card's fixed midpoint. Release R to return to the selected tool. |
 | Third icon / hold T during a drag | Move the mouse left/right to tilt around the viewing axis. Release T to return to the selected tool. |
 | Shift while dragging | One-tenth movement or rotation sensitivity |
-| L | Lock a hand at its current pose; still held |
-| Commit pair button / Enter | Release both cards when both hands are locked |
+| Release left mouse button | Leave the first card in place or release both cards when the pair is ready |
 | Reset cards button | Clear all cards and refill the deck |
 | F8 | Clear the table and replay a fresh random 52-card drop test |
 | Right-drag | Orbit selected card, or table centre |
@@ -44,13 +42,11 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | F | Focus selected card, or table centre |
 | Home | Restore initial camera |
 
-The HUD shows Move, Rotate and Tilt icons along the bottom beside Reset cards. The active mode is highlighted. Click an icon to select it, or press W for Move. The first drag from the deck pulls a card onto a horizontal plane 60mm above the tabletop. Subsequent Move drags follow the camera view, with the wheel controlling depth. Shift reduces sensitivity to one tenth. Two hands can be occupied at once. Selecting a locked hand reopens it. Selecting a card does not move the camera.
-
-Locking a card shows a faint, faceted ghost hand with four fingers, thumb and wrist. It stays above the card's upper extent and points vertically down, independently of card tilt; its palm turns toward the camera horizontally. Near-clear fill keeps the card readable. These are visual indicators with no colliders, shadows, joints or forces. Unlocking or committing removes them.
+The HUD shows Move, Rotate and Tilt icons beside Reset cards and prompts the next placement. Click an icon to select it, or press W for Move. The first drag from the deck pulls a card onto a horizontal plane 60mm above the tabletop. Subsequent Move drags follow the camera view, with the wheel controlling depth. Shift reduces sensitivity to one tenth. You can adjust the first card again before drawing the second.
 
 The toolbar uses original filled SVG designs, with transparent textures baked for Unity's immediate-mode UI. SVG sources are under `Tools/UIIcons`; regenerate them and the matching textures with `Tools/generate_solid_ui_icons.py`.
 
-Moves and rotations stop at physical surfaces and other cards, including earlier placed cards. Contact uses small swept steps with a refined stopping point. Both occupied hands must be locked, and overlapping placements refuse commit. Commit changes both bodies to dynamic without moving them or adding a release impulse, then frees the hands for the next draws. Released cards remain simulated and inspectable; mouse adjustment applies only to held cards. Reset clears the table.
+Moves and rotations stop at physical surfaces and other cards, including earlier placed cards. Contact uses small swept steps with a refined stopping point. If cards overlap at release, adjust either card and let go again. A valid pair enters physics at the positions you set, without a release impulse. Reset clears the table.
 
 The locked-card check is explicitly tested: dragging the other card through it stops the moving card and leaves the locked pose unchanged. A separate failed-placement test offsets the second card in depth so their upper edges miss; after commit, both fall flat through gravity without an added push. The successful aligned triangle and failed placement use the same physics settings.
 
@@ -61,7 +57,7 @@ The rigid-card model uses 63x88x0.32mm cards at 1.8g, 240Hz physics, finite pape
 - Move and rotate one card precisely, including fine adjustment.
 - Keep up to two cards held, one per virtual hand.
 - Switch the active hand without releasing the other card.
-- Lock each hand, then release both together and let gravity/contact determine the result.
+- Place the first card, then let go of the second to release the pair together.
 - Orbit the camera and inspect alignment from different sides.
 
 Two-card tents at 24, 28 and 32 degrees from vertical stayed standing for 20 simulated seconds in regression tests. Both cards had real table/card contacts; unsupported tilted cards fell and an impulse could disturb the tent. The same 28-degree pose was assembled through the contact-aware placement API. Rigid cards remain the initial approximation; card flex is outside this prototype.

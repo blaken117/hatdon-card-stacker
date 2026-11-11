@@ -21,6 +21,8 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 
 - [ ] **Click to Commit a Pair** (`p014-commit-pair-button`). Prepare the Esc preset and keep the HUD visible. Position two cards, lock each with L, and click Commit pair when it becomes available.
 
+- [ ] **Automatic Two-Card Steps** (`p015-automatic-pairs`). Use the Esc preset to record the first card waiting, the second release dropping both, and the next pair being added. Use Prototype 014 for the historical Ghost Hands and Click to Commit a Pair shots.
+
 ## In-game recording tools
 
 - **Esc:** open/close the admin menu. Opening cancels drag/camera gestures and pauses the simulation without releasing cards. Closing restores the previous playback/pause state.
@@ -34,7 +36,7 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 - **Mark as recorded:** save the selected shot's status, optional clip path and UTC note timestamp. This is your checklist only; it neither starts recording nor verifies the clip.
 - **Save recording notes / Copy notes file path:** save clip-path/seed edits without changing a shot's status, or copy the local state-file location for the editing handoff. On this Windows setup the default folder is `C:\Users\User\AppData\LocalLow\Hatdon\Card Stacker\`.
 - **1920 × 1080 window:** set the game window to the dev-log target size. The menu also displays the current render resolution.
-- **R:** clear/refill the table. **F8:** immediate fresh random pickup test. **L / Tab / Enter:** lock / switch hand / release.
+- **Reset cards** clears and refills the table. **F8** starts a fresh random pickup test.
 
 The game keeps running in the background so switching to your screen recorder does not pause it unexpectedly. Prepare a pickup first so the cards cannot fall while you start the recorder. No recorder, codec, microphone or video export is started by the admin menu.
 
