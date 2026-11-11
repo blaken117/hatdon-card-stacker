@@ -104,15 +104,24 @@ namespace Hatdon.CardStacker
                 {
                     var firstCard = c.Deck.Draw();
                     Pose(firstCard,new Vector3(-.12f,.07f,pair*.12f),Quaternion.identity);
-                    Require(!s.FinishPlacement() && firstCard.isKinematic && s.CanAdjust(firstCard),"The first placement waits and remains adjustable");
+                    Require(!s.BothLocked && firstCard.isKinematic && s.CanAdjust(firstCard),"The first card remains adjustable until committed");
+                    s.CommitSelectedCard();
+                    Require(s.IsLocked(0) && firstCard.isKinematic && !s.BothLocked,"Committing the first card holds it without enabling pair release");
                     var secondCard = c.Deck.Draw();
                     Pose(secondCard,firstCard.position,firstCard.rotation);
-                    Require(!s.FinishPlacement() && firstCard.isKinematic && secondCard.isKinematic,"An overlapping pair stays in place for adjustment");
+                    Require(!s.BothLocked && secondCard.isKinematic,"Drawing the second card does not enable pair release");
+                    s.CommitSelectedCard();
+                    c.HandVisuals.Refresh();
+                    Require(s.BothLocked && firstCard.isKinematic && secondCard.isKinematic && c.HandVisuals.VisibleCount==0,"Both commits hold the cards without ghost hands or physics release");
+                    Require(!s.CommitBoth() && s.BothLocked,"An overlapping pair stays held for adjustment");
+                    c.SelectCard(secondCard);
+                    Require(!s.BothLocked && s.IsLocked(0) && s.CanAdjust(secondCard),"Selecting the second card reopens only that card");
                     Pose(secondCard,new Vector3(.12f,.07f,pair*.12f),Quaternion.identity);
-                    Require(s.FinishPlacement() && !firstCard.isKinematic && !secondCard.isKinematic,"A valid pair releases without either card being locked");
+                    s.CommitSelectedCard();
+                    Require(s.BothLocked && s.CommitBoth() && !firstCard.isKinematic && !secondCard.isKinematic,"The final commit releases both cards together");
                     Require(c.Deck.Remaining==50-pair*2,"Pair release allows the next draw without refilling the deck");
                 }
-                Debug.Log("HATDON_AUTO_PAIR_OK: first card waits, overlap can be corrected, two successive pairs release.");
+                Debug.Log("HATDON_MANUAL_PAIR_OK: per-card holds, overlap correction, explicit release and two successive pairs passed.");
                 Debug.Log("HATDON_DECK_MOUSE_TEST_OK: empty start, deck picking, single draw, 2-hand cap, plane/depth/fine/arcball/twist, fixed rotation pivot, continuing after commit, placed contact and reset passed.");
                 Application.Quit(0);
             }

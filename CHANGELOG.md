@@ -1,5 +1,10 @@
 # Changelog
 
+## Commit each card, then release the pair
+
+- Hold each card with Commit card. Once both cards are held, Commit pair releases them into physics together.
+- Select a held card to adjust and recommit it. Ghost hands stay hidden during normal play.
+
 ## Automatic two-card steps
 
 - The first card waits in position. Letting go with both cards positioned releases the pair and opens the next step.

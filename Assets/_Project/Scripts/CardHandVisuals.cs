@@ -37,7 +37,7 @@ namespace Hatdon.CardStacker
         {
             for (int i = 0; i < 2; i++)
             {
-                bool visible = controls.Placement.IsLocked(i);
+                bool visible = controls.Placement.ShowsGhost(i);
                 grips[i].gameObject.SetActive(visible);
                 if (!visible) continue;
                 var card = controls.Hands[i];

@@ -1,5 +1,9 @@
 # Development record
 
+## Prototype 016 — Commit each card, then release the pair
+
+Each card stays adjustable after a drag. Commit card holds it at its current pose. The toolbar offers Commit pair once both are held, and the existing overlap check runs before physics release. The Esc catalogue includes a pending shot from a fresh table.
+
 ## Prototype 015 — Automatic two-card steps
 
 Mouse release places the first card and releases both cards once the pair is ready. The existing overlap check keeps an invalid pair staged for adjustment. Cancelled drags do not trigger release. Normal play uses automatic steps and the HUD prompts the next action. The Esc catalogue includes a pending shot that shows two successive pairs.

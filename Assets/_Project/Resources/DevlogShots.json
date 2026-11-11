@@ -57,8 +57,14 @@
     {
       "id": "p015-automatic-pairs",
       "title": "Automatic Two-Card Steps",
+      "preset": "none",
+      "instructions": "Use Prototype 015. Draw and position the first card, then let go. Show it waiting in place. Draw and position the second, then let go to release both. Place a second pair while the earlier cards remain on the table."
+    },
+    {
+      "id": "p016-card-and-pair-commits",
+      "title": "Commit Each Card, Then Release the Pair",
       "preset": "normal",
-      "instructions": "Draw and position the first card, then let go. Show it waiting in place. Draw and position the second, then let go to release both. Place a second pair while the earlier cards remain on the table."
+      "instructions": "Keep the HUD visible. Place the first card and click Commit card. Repeat with the second and briefly show both cards held in place. Click Commit pair to release them, then draw the next card."
     }
   ]
 }

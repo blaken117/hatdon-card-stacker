@@ -4,7 +4,7 @@ A Unity experiment about building structures by positioning playing cards in pai
 
 ## Status
 
-Draw and position the first card, then let go to leave it in place. Draw and position the second card. Letting go releases the pair into gravity and contact physics. Draw the next pair while earlier cards remain on the table.
+Draw and position the first card, then click **Commit card** to hold it in place. Repeat with the second card. Click **Commit pair** to release both into physics, then draw the next pair while earlier cards remain on the table.
 
 ## Open the project
 
@@ -33,7 +33,9 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | Second icon / hold R during a drag | Rotate around the card's fixed midpoint. Release R to return to the selected tool. |
 | Third icon / hold T during a drag | Move the mouse left/right to tilt around the viewing axis. Release T to return to the selected tool. |
 | Shift while dragging | One-tenth movement or rotation sensitivity |
-| Release left mouse button | Leave the first card in place or release both cards when the pair is ready |
+| Release left mouse button | End the drag and leave the card ready for adjustment |
+| Commit card button | Hold the selected card in place. Select it again to adjust it. |
+| Commit pair button | Release both cards into physics after committing each one |
 | Reset cards button | Clear all cards and refill the deck |
 | F8 | Clear the table and replay a fresh random 52-card drop test |
 | Right-drag | Orbit selected card, or table centre |
