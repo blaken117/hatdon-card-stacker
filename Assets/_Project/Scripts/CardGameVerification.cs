@@ -20,7 +20,7 @@ namespace Hatdon.CardStacker
                 yield return new WaitForSecondsRealtime(.5f);
                 ScreenCapture.CaptureScreenshot(Path.Combine(Application.dataPath,"../challenge-menu.png"));
                 yield return new WaitForSecondsRealtime(.5f);
-                game.OpenTable(3);
+                game.OpenTable(9);
                 yield return new WaitForSecondsRealtime(.5f);
                 ScreenCapture.CaptureScreenshot(Path.Combine(Application.dataPath,"../challenge-guide.png"));
                 yield return new WaitForSecondsRealtime(.5f);
@@ -56,25 +56,29 @@ namespace Hatdon.CardStacker
                         Require(preview.transform.childCount == layout.Cards.Count &&
                             preview.GetComponentsInChildren<Collider>().Length == 0,"Guide matches layout and has no colliders");
                         var cards = new List<Rigidbody>();
-                        foreach (Pose pose in layout.Cards)
+                        Physics.simulationMode = SimulationMode.Script;
+                        for (int index = 0; index < layout.Cards.Count; index++)
                         {
+                            Pose pose = layout.Cards[index];
+                            bool flat = Mathf.Abs((pose.rotation * Vector3.forward).y) > .9f;
+                            if (index > 0 && Mathf.Abs(layout.Cards[index - 1].position.y - pose.position.y) > .02f)
+                                Simulate(240);
                             var card = controls.Deck.Draw();
                             card.position = pose.position;
                             card.rotation = pose.rotation;
                             controls.Placement.CommitSelectedCard();
-                            controls.Placement.ReleaseSingle();
-                            Require(!card.isKinematic,layout.Name + " card " + (cards.Count + 1) + ": " + controls.Placement.Status);
+                            if (flat) controls.Placement.ReleaseSingle();
+                            else if (controls.Placement.BothLocked) controls.Placement.CommitBoth();
+                            if (flat || controls.Placement.HeldSingleSlot < 0)
+                                Require(!card.isKinematic,layout.Name + " card " + (index + 1) + ": " + controls.Placement.Status);
                             cards.Add(card);
                         }
                         Physics.SyncTransforms();
-                        Physics.simulationMode = SimulationMode.Script;
-                        var models = FindObjectsByType<CardAerodynamics>(FindObjectsSortMode.None);
-                        for (int tick = 0; tick < 4 * 240; tick++)
-                        {
-                            foreach (var model in models) model.ApplyForces();
-                            Physics.Simulate(CardPlacementSession.Step);
-                        }
+                        Simulate(4 * 240);
                         Physics.simulationMode = SimulationMode.FixedUpdate;
+                        if (!CardChallenges.Matches(layout,cards,new int[52],new bool[52]))
+                            for (int i = 0; i < cards.Count; i++)
+                                Debug.Log($"Tower card {i + 1} moved {Vector3.Distance(layout.Cards[i].position,cards[i].position):F4}m");
                         Require(CardChallenges.Matches(layout,cards,new int[52],new bool[52]),layout.Name + " remains standing after four physics seconds");
                         Debug.Log("HATDON_CHALLENGE_OK " + layout.Name);
                         game.ResetCurrentTable();
@@ -116,7 +120,7 @@ namespace Hatdon.CardStacker
                     game.ResetCurrentTable();
                     game.ShowMenu();
                     string directory = args[Array.IndexOf(args,"-verifyCardGame")+1];
-                    Require(File.ReadAllText(Path.Combine(directory,"level-01.json")).Contains("\"completed\":true"),"Completed challenge persisted");
+                    Require(File.ReadAllText(Path.Combine(directory,"tower-01.json")).Contains("\"completed\":true"),"Completed challenge persisted");
                 }
                 Debug.Log("HATDON_GAME_VERIFY_OK");
                 Application.Quit(0);
@@ -131,6 +135,16 @@ namespace Hatdon.CardStacker
         private static void Require(bool condition, string message)
         {
             if (!condition) throw new InvalidOperationException(message);
+        }
+
+        private static void Simulate(int ticks)
+        {
+            var models = FindObjectsByType<CardAerodynamics>(FindObjectsSortMode.None);
+            for (int tick = 0; tick < ticks; tick++)
+            {
+                foreach (var model in models) model.ApplyForces();
+                Physics.Simulate(CardPlacementSession.Step);
+            }
         }
     }
 }

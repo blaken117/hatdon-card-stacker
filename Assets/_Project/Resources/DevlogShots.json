@@ -71,6 +71,12 @@
       "title": "Challenges and Ghost Layouts",
       "preset": "challenge",
       "instructions": "Use Shift+Esc to prepare the Bridge preview. Toggle its guide, place two triangles, then use Release card for the top. Separately use a normal level to show its cards and completion retained after returning from the main menu."
+    },
+    {
+      "id": "p018-tower-layouts",
+      "title": "Building a Third Floor",
+      "preset": "tower",
+      "instructions": "Prepare the three-floor pyramid. Record the ghost guide, building upwards, and the last pair settling on the top floor."
     }
   ]
 }

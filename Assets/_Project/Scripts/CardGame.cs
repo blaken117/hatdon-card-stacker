@@ -40,6 +40,8 @@ namespace Hatdon.CardStacker
         private bool confirmReset;
         private bool pausedBeforeReset;
         private bool recordingPreview;
+        private bool classic;
+        private CardChallenges.Layout[] Layouts => classic ? CardChallenges.Classic : CardChallenges.Levels;
         private Table table;
         private string previousSave, saveIssue;
         private float nextSave, nextMatch, matchSince = -1;
@@ -65,7 +67,8 @@ namespace Hatdon.CardStacker
             controls.Admin.SetPaused(true);
         }
 
-        private string PathFor(int id) => Path.Combine(directory, id == Practice ? "practice.json" : $"level-{id + 1:00}.json");
+        private string PathFor(int id) => Path.Combine(directory, id == Practice ? "practice.json" :
+            classic ? $"level-{id + 1:00}.json" : $"tower-{id + 1:00}.json");
 
         private Table Read(int id)
         {
@@ -96,6 +99,7 @@ namespace Hatdon.CardStacker
             table = Read(id);
             previousSave = JsonUtility.ToJson(table);
             controls.Placement.ResetCards();
+            controls.Placement.SetTowerFriction(id >= 0 && !classic);
             foreach (var card in table.cards)
             {
                 Rigidbody restored = controls.Placement.RestoreCard(card.slot,card.position,card.rotation,card.number,card.held);
@@ -113,6 +117,7 @@ namespace Hatdon.CardStacker
             controls.Placement.Notify(table.cards.Count == 0 ? "Drag a card from the deck." :
                 controls.Placement.BothLocked ? "Click Commit pair to release both cards." : "Table restored.");
             controls.ResetView();
+            if (id >= 0) FrameLayout(Layouts[id]);
             controls.Admin.HideHud = false;
             controls.Admin.SetPaused(false);
             nextSave = nextMatch = Time.unscaledTime;
@@ -144,19 +149,31 @@ namespace Hatdon.CardStacker
                 confirmReset = false;
                 ClearGuide();
                 controls.Placement.ResetCards();
+                controls.Placement.SetTowerFriction(false);
                 controls.ResetView();
             }
         }
 
-        public void PreviewChallenge()
+        public void PreviewChallenge(bool tower)
         {
             OpenRecording();
             recordingPreview = true;
-            active = 3;
+            classic = !tower;
+            tables.Clear();
+            active = tower ? 5 : 3;
+            controls.Placement.SetTowerFriction(tower);
             table = new Table();
             controls.Admin.HideHud = false;
             controls.Admin.SetPaused(false);
+            FrameLayout(Layouts[active]);
             BuildGuide();
+        }
+
+        private void FrameLayout(CardChallenges.Layout layout)
+        {
+            if (layout.Floors < 3) return;
+            float middle = layout.Height * .43f;
+            controls.SetCameraView(new Vector3(.25f,middle + .31f,-.68f),new Vector3(0,middle,0));
         }
 
         public void RequestReset()
@@ -251,7 +268,7 @@ namespace Hatdon.CardStacker
                 if (card.gameObject.activeInHierarchy && !card.isKinematic &&
                     card.linearVelocity.sqrMagnitude < .0001f && card.angularVelocity.sqrMagnitude < .04f)
                     candidates.Add(card);
-            if (!CardChallenges.Matches(CardChallenges.Levels[active],candidates,matches,visited))
+            if (!CardChallenges.Matches(Layouts[active],candidates,matches,visited))
             {
                 matchSince = -1;
                 return;
@@ -268,7 +285,7 @@ namespace Hatdon.CardStacker
             if (active < 0) return;
             guideMaterial ??= new Material(Shader.Find("Sprites/Default")) { color = new Color(.38f,.91f,.88f,.72f) };
             guideRoot = new GameObject("Challenge guide");
-            foreach (Pose pose in CardChallenges.Levels[active].Cards)
+            foreach (Pose pose in Layouts[active].Cards)
             {
                 var ghost = new GameObject("Ghost card");
                 ghost.transform.SetParent(guideRoot.transform);

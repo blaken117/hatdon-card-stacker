@@ -24,6 +24,7 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 - [ ] **Automatic Two-Card Steps** (`p015-automatic-pairs`). Use Prototype 015 to record the first card waiting, the second release dropping both, and the next pair being added. Use Prototype 014 for the historical Ghost Hands and Click to Commit a Pair shots.
 - [ ] **Commit Each Card, Then Release the Pair** (`p016-card-and-pair-commits`). Use the Esc preset and keep the HUD visible. Record both Commit card clicks, pause briefly before clicking Commit pair, and draw the next card after release.
 - [ ] **Challenges and Ghost Layouts** (`p017-challenge-collection`). Press Shift+Esc and prepare the Bridge preview. Record guide toggling and placing the top card. Use a normal challenge to show its cards and completion after leaving and reopening the table.
+- [ ] **Building a Third Floor** (`p018-tower-layouts`). Prepare the pyramid preview with Shift+Esc. Record the bottom row, flat bridges, and the last leaning pair settling on the third floor.
 
 ## In-game recording tools
 

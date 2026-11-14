@@ -60,11 +60,11 @@ namespace Hatdon.CardStacker
             }
             Label(new Rect(286,362,350,49),"Challenges",heading,Ink);
             int completed = 0;
-            for (int i = 0; i < CardChallenges.Levels.Length; i++) if (Read(i).completed) completed++;
+            for (int i = 0; i < Layouts.Length; i++) if (Read(i).completed) completed++;
             Label(new Rect(1410,372,210,32),$"{completed} / 10 completed",small,Warm);
-            for (int i = 0; i < CardChallenges.Levels.Length; i++)
+            for (int i = 0; i < Layouts.Length; i++)
             {
-                var layout = CardChallenges.Levels[i];
+                var layout = Layouts[i];
                 var saved = Read(i);
                 var rect = new Rect(286+(i%5)*272,426+(i/5)*170,252,150);
                 bool clicked = Button(rect,"",Tile,Ink);
@@ -74,7 +74,12 @@ namespace Hatdon.CardStacker
                 Label(new Rect(rect.x+17,rect.y+104,220,25),status,small,saved.completed ? Warm : Accent);
                 if (clicked) { OpenTable(i); return; }
             }
-            Label(new Rect(286,872,1020,44),saveIssue ?? "Your cards are saved separately on each table.",body,Muted);
+            Label(new Rect(286,872,770,44),saveIssue ?? "Your cards are saved separately on each table.",body,Muted);
+            if (Button(new Rect(1100,866,350,52),classic ? "Tower challenges" : "Classic challenges",Tile,Ink))
+            {
+                classic = !classic;
+                tables.Clear();
+            }
             if (Button(new Rect(1476,866,148,52),"Quit",Tile,Ink)) Application.Quit();
         }
 
@@ -83,9 +88,9 @@ namespace Hatdon.CardStacker
             if (Button(MenuButton,"Main menu",Panel,Ink)) { ShowMenu(); return; }
             if (active == Recording) return;
             Fill(new Rect(46,106,546,102),Panel);
-            string name = active == Practice ? "Practice" : $"{active + 1:00}   {CardChallenges.Levels[active].Name}";
+            string name = active == Practice ? "Practice" : $"{active + 1:00}   {Layouts[active].Name}";
             Label(new Rect(64,112,490,45),name,heading,Ink);
-            string hint = active == Practice ? "Build freely with a full deck." : CardChallenges.Levels[active].Hint;
+            string hint = active == Practice ? "Build freely with a full deck." : Layouts[active].Hint;
             Label(new Rect(64,157,516,37),saveIssue ?? hint,small,Muted);
             if (active >= 0)
             {

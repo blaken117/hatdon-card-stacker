@@ -20,6 +20,12 @@ namespace Hatdon.CardStacker
 
         public int CardNumber(Rigidbody card) => cardNumbers[card];
 
+        public void SetTowerFriction(bool tower)
+        {
+            paper.staticFriction = tower ? 1f : .48f;
+            paper.dynamicFriction = tower ? .75f : .32f;
+        }
+
         public void Initialise(CardStackerControls owner)
         {
             controls=owner;originals=(Rigidbody[])owner.Hands.Clone();

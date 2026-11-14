@@ -1,5 +1,9 @@
 # Development record
 
+## Prototype 018 — Tower challenges
+
+Ten tower layouts progress from a leaning pair through a 33-card terrace with four floors. They use separate save files from the classic collection. The higher layouts open with the camera framed to their height. Tower cards use higher contact friction to reduce slipping under load.
+
 ## Prototype 017 — Challenge collection
 
 The main menu lists ten layouts and the separate Practice table. Guides have no colliders. A challenge is marked complete once distinct released cards match all targets for three seconds. Tables autosave card poses, staged holds, deck and completion to separate files. Shift+Esc opens the recording tools with an isolated Bridge preview.

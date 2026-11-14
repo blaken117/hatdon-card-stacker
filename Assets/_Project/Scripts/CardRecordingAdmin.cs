@@ -99,10 +99,10 @@ namespace Hatdon.CardStacker
                 PreparePickup(seed);
             }
             else if(shot.preset=="normal"){controls.Game?.OpenRecording();controls.Placement.ResetCards();controls.ResetView();HideHud=false;SetPaused(false);}
-            else if(shot.preset=="challenge")
+            else if(shot.preset=="challenge" || shot.preset=="tower")
             {
                 controls.Game?.OpenRecording();
-                controls.Game?.PreviewChallenge();
+                controls.Game?.PreviewChallenge(shot.preset=="tower");
             }
             SetOpen(false);
         }

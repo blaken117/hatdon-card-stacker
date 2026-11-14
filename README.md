@@ -4,7 +4,7 @@ A Unity experiment about building structures by positioning playing cards in pai
 
 ## Status
 
-Choose Practice or one of ten challenges. Challenges have a toggleable guide and complete once the released cards match it and stay in place for three seconds. Each table saves locally so you can return to it later.
+Choose Practice or one of ten tower challenges, from a leaning pair to a four-floor terrace. Classic challenges are also available from the menu. Challenges have a toggleable guide and complete once the released cards match it and stay in place for three seconds. Each table saves locally so you can return to it later.
 
 Draw and position the first card, then click **Commit card** to hold it in place. Repeat with the second card, then click **Commit pair** to release them together. Use **Release card** when placing one card on its own.
 

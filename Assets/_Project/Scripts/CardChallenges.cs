@@ -13,7 +13,10 @@ namespace Hatdon.CardStacker
 
             internal Layout(string name, string hint) { Name = name; Hint = hint; }
 
-            internal Layout Tent(float x, float z, float degrees = 28f, float heading = 0f)
+            internal float Height { get; private set; }
+            internal int Floors { get; private set; } = 1;
+
+            internal Layout Tent(float x, float z, float degrees = 28f, float heading = 0f, float floor = 0)
             {
                 float radians = degrees * Mathf.Deg2Rad;
                 float foot = (.088f * Mathf.Sin(radians) + CardPlacementSession.CardThickness * Mathf.Cos(radians)) / 2f;
@@ -21,11 +24,41 @@ namespace Hatdon.CardStacker
                 Quaternion turn = Quaternion.Euler(0, heading, 0);
                 foreach (int side in new[] { -1, 1 })
                 {
-                    Vector3 position = new Vector3(x, 0, z) + turn * new Vector3(side * foot, height, 0);
+                    Vector3 position = new Vector3(x, floor, z) + turn * new Vector3(side * foot, height, 0);
                     Quaternion rotation = turn * Quaternion.AngleAxis(side * degrees, Vector3.forward)
                         * Quaternion.Euler(0, -side * 90, 0);
                     Cards.Add(new Pose(position, rotation));
                 }
+                Height = Mathf.Max(Height,floor + 2f * height);
+                return this;
+            }
+
+            internal Layout Tower(float x, float z, float heading, params int[] rows)
+            {
+                const float spacing = .087f;
+                const float lean = 22f;
+                float angle = lean * Mathf.Deg2Rad;
+                float rise = .088f * Mathf.Cos(angle) + CardPlacementSession.CardThickness * Mathf.Sin(angle);
+                float floor = 0;
+                float edge = -(rows[0] - 1) * spacing / 2f;
+                Quaternion turn = Quaternion.Euler(0,heading,0);
+                for (int row = 0; row < rows.Length; row++)
+                {
+                    for (int pair = 0; pair < rows[row]; pair++)
+                    {
+                        Vector3 offset = turn * new Vector3(edge + pair * spacing,0,0);
+                        Tent(x + offset.x,z + offset.z,lean,heading,floor);
+                    }
+                    if (row == rows.Length - 1) break;
+                    for (int bridge = 0; bridge < rows[row + 1]; bridge++)
+                    {
+                        Vector3 offset = turn * new Vector3(edge + (bridge + .5f) * spacing,0,0);
+                        Flat(x + offset.x,z + offset.z,heading + 90,floor + rise + .000035f + (bridge % 2)*.00032f);
+                    }
+                    floor += rise + 2f*CardPlacementSession.CardThickness + .00006f;
+                    edge += spacing / 2f;
+                }
+                Floors = Mathf.Max(Floors,rows.Length);
                 return this;
             }
 
@@ -40,6 +73,22 @@ namespace Hatdon.CardStacker
         private const float RoofHeight = .080f;
 
         internal static readonly Layout[] Levels =
+        {
+            new Layout("First Fold", "Lean two cards together to form the base.").Tent(0,0),
+            new Layout("Bridge Base", "Lay one flat card across two leaning pairs.").Tent(-.043f,0).Tent(.043f,0).Flat(0,0,90,RoofHeight),
+            new Layout("Second Floor", "Build a leaning pair on top of the bridge.").Tower(0,0,0,2,1),
+            new Layout("Side Stair", "Start with three pairs. Build the upper floor at one end.").Tower(0,0,0,3,1),
+            new Layout("Crossed Towers", "Build two separate towers facing different directions.")
+                .Tower(-.097f,0,25,2,1).Tower(.097f,0,-25,2,1),
+            new Layout("Three Floors", "Build a pyramid with three pairs at the base.").Tower(0,0,0,3,2,1),
+            new Layout("Corner Peak", "Use a wide base and build the third floor off centre.").Tower(0,0,-25,4,2,1),
+            new Layout("Twin Summits", "Build two three-floor pyramids in parallel.").Tower(0,-.063f,0,3,2,1).Tower(0,.063f,0,3,2,1),
+            new Layout("Four Floors", "Work upward from four pairs to a single peak.").Tower(0,0,0,4,3,2,1),
+            new Layout("Grand Terrace", "Build a four-floor pyramid and a lower tower in front.").Tower(0,0,0,4,3,2,1)
+                .Tower(.074f,-.13f,0,2,1)
+        };
+
+        internal static readonly Layout[] Classic =
         {
             new Layout("First Fold", "Lean two cards together to make a freestanding triangle.").Tent(0, 0),
             new Layout("Twin Peaks", "Build two separate triangles side by side.").Tent(-.075f, 0).Tent(.075f, 0),

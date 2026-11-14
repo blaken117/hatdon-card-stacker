@@ -1,5 +1,10 @@
 # Changelog
 
+## Tower challenges
+
+- The main challenge collection now builds up to four floors, with offset stairs, angled towers and twin pyramids.
+- Classic challenges and their saved tables remain available from the main menu.
+
 ## Challenge collection
 
 - Added a main menu with ten guided challenges and a separate Practice table.
