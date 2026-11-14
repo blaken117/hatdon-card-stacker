@@ -95,9 +95,15 @@ namespace Hatdon.CardStacker
             if(shot.preset=="pickup")
             {
                 if(!int.TryParse(seedText,out int seed)){notice="Enter a whole-number seed first.";return;}
+                controls.Game?.OpenRecording();
                 PreparePickup(seed);
             }
-            else if(shot.preset=="normal"){controls.Placement.ResetCards();controls.ResetView();HideHud=false;SetPaused(false);}
+            else if(shot.preset=="normal"){controls.Game?.OpenRecording();controls.Placement.ResetCards();controls.ResetView();HideHud=false;SetPaused(false);}
+            else if(shot.preset=="challenge")
+            {
+                controls.Game?.OpenRecording();
+                controls.Game?.PreviewChallenge();
+            }
             SetOpen(false);
         }
 
@@ -177,12 +183,12 @@ namespace Hatdon.CardStacker
             if(Button(900,658,160,"Table view"))controls.SetCameraView(new Vector3(.46f,.48f,-.65f),new Vector3(0,.025f,0));
             if(Button(1074,658,148,"Save view"))SaveCamera();
             GUI.enabled=progress.hasView;if(Button(1236,658,148,"Restore view"))RestoreCamera();GUI.enabled=true;
-            if(Button(1398,658,152,"Reset table")){controls.ResetTable();controls.ResetView();}
+            if(Button(1398,658,152,"Reset table")){controls.Game?.OpenRecording();controls.ResetTable();controls.ResetView();}
             GUI.Label(new Rect(706,718,800,28),"Optional footage file path (for your editing handoff)",small);
             note.filePath=GUI.TextField(new Rect(706,751,594,36),note.filePath ?? "",4096,input);
             if(Button(1314,747,236,note.recorded ? "Mark pending again" : "Mark as recorded"))MarkRecorded(active.id,!note.recorded,note.filePath);
             GUI.Label(new Rect(366,822,1180,52),notice,text);
-            GUI.Label(new Rect(366,893,1180,50),"Outside menu: Space play/pause · . single frame · F10 HUD · Esc menu · Hold R rotate · Hold T tilt",small);
+            GUI.Label(new Rect(366,893,1180,50),"Space plays or pauses · Period steps a frame · F10 hides HUD · Shift+Esc opens these tools",small);
             GUI.color=color;GUI.matrix=matrix;
         }
         private void OnDestroy(){Time.timeScale=1;}

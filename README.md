@@ -4,7 +4,9 @@ A Unity experiment about building structures by positioning playing cards in pai
 
 ## Status
 
-Draw and position the first card, then click **Commit card** to hold it in place. Repeat with the second card. Click **Commit pair** to release both into physics, then draw the next pair while earlier cards remain on the table.
+Choose Practice or one of ten challenges. Challenges have a toggleable guide and complete once the released cards match it and stay in place for three seconds. Each table saves locally so you can return to it later.
+
+Draw and position the first card, then click **Commit card** to hold it in place. Repeat with the second card, then click **Commit pair** to release them together. Use **Release card** when placing one card on its own.
 
 ## Open the project
 
@@ -14,7 +16,7 @@ Draw and position the first card, then click **Commit card** to hold it in place
 4. Open `Assets/_Project/Scenes/CardStacker.unity`.
 5. To recreate the starting scene, choose **Hatdon > Card Stacker > Create Setup Scene** (this replaces it after confirmation).
 
-Press **Play** to start with an empty table and a 52-card deck. The scene's two hidden card templates supply the first pair. No Asset Store assets or online services are required.
+Press **Play** to open the main menu. Each new table starts with a 52-card deck.
 
 ## Current controls
 
@@ -26,7 +28,8 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | Drag from deck | Draw one card into a free hand and pull it onto the table |
 | Left-click a card | Select it; gold outline; drag to adjust a held card |
 | Left-click empty table | Deselect without changing held/released state |
-| Esc | Open/close the paused admin and recording-tools menu |
+| Esc | Return to the main menu or close a dialog |
+| Shift+Esc | Open the paused admin and recording tools |
 | Space / . | Play/pause / advance one frame while paused |
 | F10 | Toggle HUD and selection markers for clean takes |
 | First icon / W | Drag across the camera view and scroll during the same drag to adjust depth |
@@ -36,8 +39,8 @@ The playing area uses green felt on a walnut desktop, with a reading lamp, deck 
 | Release left mouse button | End the drag and leave the card ready for adjustment |
 | Commit card button | Hold the selected card in place. Select it again to adjust it. |
 | Commit pair button | Release both cards into physics after committing each one |
-| Reset cards button | Clear all cards and refill the deck |
-| F8 | Clear the table and replay a fresh random 52-card drop test |
+| Release card button | Release one held card on its own |
+| Reset cards button | Confirm clearing the current table and refilling its deck |
 | Right-drag | Orbit selected card, or table centre |
 | Middle-drag | Pan |
 | Mouse wheel outside a card drag | Zoom within near/far limits |

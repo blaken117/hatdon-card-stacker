@@ -1,5 +1,11 @@
 # Changelog
 
+## Challenge collection
+
+- Added a main menu with ten guided challenges and a separate Practice table.
+- Each table saves its cards, deck, guide setting and completion locally. Reset clears the active table only.
+- Release card lets players place a single card into physics for bridges and other odd-card builds.
+
 ## Commit each card, then release the pair
 
 - Hold each card with Commit card. Once both cards are held, Commit pair releases them into physics together.

@@ -19,8 +19,14 @@ namespace Hatdon.CardStacker
             if(Remaining<=0){controls.Placement.Notify("The deck is empty. Reset the table for a fresh deck.");return null;}
             var card=controls.Placement.DrawCard(controls.ActiveHand,StockPosition,stock.rotation*Quaternion.Euler(-90,0,0),52-Remaining);
             if(card==null)return null;
-            Remaining--;stock.localScale=new Vector3(1,Mathf.Max(.08f,Remaining/52f),1);
-            stock.gameObject.SetActive(Remaining>0);Physics.SyncTransforms();return card;
+            SetRemaining(Remaining-1);
+            Physics.SyncTransforms();return card;
+        }
+        public void SetRemaining(int remaining)
+        {
+            Remaining=Mathf.Clamp(remaining,0,52);
+            stock.localScale=new Vector3(1,Mathf.Max(.08f,Remaining/52f),1);
+            stock.gameObject.SetActive(Remaining>0);
         }
         public void ResetStock(){Remaining=52;stock.gameObject.SetActive(true);stock.localScale=Vector3.one;Physics.SyncTransforms();}
         public void EmptyForDrop(){Remaining=0;stock.gameObject.SetActive(false);}

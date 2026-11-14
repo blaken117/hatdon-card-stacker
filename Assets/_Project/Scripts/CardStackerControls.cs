@@ -17,6 +17,7 @@ namespace Hatdon.CardStacker
         public CardHandVisuals HandVisuals { get; private set; }
         public CardPickupDrop Pickup { get; private set; }
         public CardRecordingAdmin Admin { get; private set; }
+        public CardGame Game { get; private set; }
         public int ActiveHand=>lastHandIndex;
         public List<Rigidbody> AllCards { get; }=new List<Rigidbody>();
         public bool CanManipulate => Selected!=null && Placement.CanAdjust(Selected);
@@ -61,6 +62,22 @@ namespace Hatdon.CardStacker
             gameObject.AddComponent<CardModeToolbar>().Initialise(this);
             Pickup=gameObject.AddComponent<CardPickupDrop>();Pickup.Initialise(this);
             Admin=gameObject.AddComponent<CardRecordingAdmin>();Admin.Initialise(this);
+            string[] args = System.Environment.GetCommandLineArgs();
+            bool prototypeRunner = System.Array.Exists(args, arg => arg == "-recordDevlog" ||
+                (arg.StartsWith("-card",System.StringComparison.Ordinal) && arg.EndsWith("Test",System.StringComparison.Ordinal)));
+            if (!prototypeRunner)
+            {
+                string saves = System.IO.Path.Combine(Application.persistentDataPath,"tables-v1");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                int verifyOption = System.Array.IndexOf(args,"-verifyCardGame");
+                if (verifyOption >= 0) saves = args[verifyOption+1];
+#endif
+                Game = gameObject.AddComponent<CardGame>();
+                Game.Initialise(this,saves);
+            }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (System.Array.IndexOf(args,"-verifyCardGame") >= 0) gameObject.AddComponent<CardGameVerification>();
+#endif
         }
 
         public void RegisterCard(Rigidbody card)
@@ -94,7 +111,8 @@ namespace Hatdon.CardStacker
 
         public bool IsOverInterface(Vector2 screenPoint)
         {
-            return (Admin!=null && Admin.IsOpen) || (!(Admin!=null && Admin.HideHud) && CardModeToolbar.Contains(screenPoint));
+            return (Admin!=null && Admin.IsOpen) || (Game != null && Game.Contains(screenPoint)) ||
+                (!(Admin!=null && Admin.HideHud) && CardModeToolbar.Contains(screenPoint));
         }
 
         public Rigidbody PickCard(Vector2 screenPoint)
@@ -132,8 +150,15 @@ namespace Hatdon.CardStacker
 #if HATDON_CAPTURE
             if (CaptureMode) return;
 #endif
-            if(Input.GetKeyDown(KeyCode.Escape)){Admin.SetOpen(!Admin.IsOpen);return;}
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (Admin.IsOpen || Game == null || Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    Admin.SetOpen(!Admin.IsOpen);
+                else Game.HandleEscape();
+                return;
+            }
             if(Admin.IsOpen)return;
+            if (Game != null && Game.BlocksTable) return;
             if(Input.GetKeyDown(KeyCode.Space))Admin.TogglePlayback();
             if(Input.GetKeyDown(KeyCode.Period))Admin.StepFrame();
             if(Input.GetKeyDown(KeyCode.F10))Admin.HideHud=!Admin.HideHud;
@@ -150,7 +175,7 @@ namespace Hatdon.CardStacker
                     Input.mouseScrollDelta.y, Input.GetKey(HoldRotateKey), Input.GetKey(HoldTiltKey));
             if (!Input.GetMouseButton(0) && Manipulator.Dragging) Manipulator.EndDrag();
             if (Input.GetKeyDown(KeyCode.W)) SetMouseTool(CardManipulator.Tool.Move,pointer);
-            if (Input.GetKeyDown(KeyCode.F8)) { Pickup.StartDrop(System.Environment.TickCount);FramePickup();Admin.SetPaused(false); }
+            if (Input.GetKeyDown(KeyCode.F8) && Game == null) { Pickup.StartDrop(System.Environment.TickCount);FramePickup();Admin.SetPaused(false); }
             if (Input.GetKeyDown(KeyCode.F)) FocusSelection();
             if (Input.GetKeyDown(KeyCode.Home)) ResetView();
             if (Input.GetMouseButtonDown(1) && !overUI && !Manipulator.Dragging)

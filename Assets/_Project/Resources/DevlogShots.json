@@ -65,6 +65,12 @@
       "title": "Commit Each Card, Then Release the Pair",
       "preset": "normal",
       "instructions": "Keep the HUD visible. Place the first card and click Commit card. Repeat with the second and briefly show both cards held in place. Click Commit pair to release them, then draw the next card."
+    },
+    {
+      "id": "p017-challenge-collection",
+      "title": "Challenges and Ghost Layouts",
+      "preset": "challenge",
+      "instructions": "Use Shift+Esc to prepare the Bridge preview. Toggle its guide, place two triangles, then use Release card for the top. Separately use a normal level to show its cards and completion retained after returning from the main menu."
     }
   ]
 }

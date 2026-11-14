@@ -23,10 +23,11 @@ The in-game catalogue is `Assets/_Project/Resources/DevlogShots.json`. The check
 
 - [ ] **Automatic Two-Card Steps** (`p015-automatic-pairs`). Use Prototype 015 to record the first card waiting, the second release dropping both, and the next pair being added. Use Prototype 014 for the historical Ghost Hands and Click to Commit a Pair shots.
 - [ ] **Commit Each Card, Then Release the Pair** (`p016-card-and-pair-commits`). Use the Esc preset and keep the HUD visible. Record both Commit card clicks, pause briefly before clicking Commit pair, and draw the next card after release.
+- [ ] **Challenges and Ghost Layouts** (`p017-challenge-collection`). Press Shift+Esc and prepare the Bridge preview. Record guide toggling and placing the top card. Use a normal challenge to show its cards and completion after leaving and reopening the table.
 
 ## In-game recording tools
 
-- **Esc:** open/close the admin menu. Opening cancels drag/camera gestures and pauses the simulation without releasing cards. Closing restores the previous playback/pause state.
+- **Shift+Esc:** open the admin menu in Prototype 017 onward. Esc closes it. Opening cancels drag and camera gestures and pauses the simulation.
 - **Prepare shot & close menu:** stages the selected scene without recording video. Pickup stays frozen until Space; the hand and normal-play presets are ready for direct player input.
 - **Seed:** reuse a whole-number seed for the same cloud, or click New random seed. Preparing again clears the previous scene.
 - **Space:** play/pause. For a prepared pickup cloud, release all 52 cards and start playback.

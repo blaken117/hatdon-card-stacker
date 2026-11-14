@@ -28,7 +28,8 @@ namespace Hatdon.CardStacker
 
         private void OnGUI()
         {
-            if (controls == null || (controls.Admin!=null && (controls.Admin.IsOpen || controls.Admin.HideHud))) return;
+            if (controls == null || (controls.Admin!=null && (controls.Admin.IsOpen || controls.Admin.HideHud)) ||
+                (controls.Game != null && controls.Game.BlocksTable)) return;
             keyLabel ??= new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 17, fontStyle = FontStyle.Bold };
             actionButton ??= new GUIStyle(GUI.skin.button) { fontSize = 17, fontStyle = FontStyle.Bold };
             Matrix4x4 old = GUI.matrix;Color oldColor = GUI.color;
@@ -63,7 +64,11 @@ namespace Hatdon.CardStacker
                 else controls.Placement.CommitSelectedCard();
             }
             GUI.enabled = wasEnabled;
-            if (GUI.Button(ButtonRect(Modes.Length + 1), "Reset cards", actionButton)) controls.ResetTable();
+            if (GUI.Button(ButtonRect(Modes.Length + 1), "Reset cards", actionButton))
+            {
+                if (controls.Game != null) controls.Game.RequestReset();
+                else controls.ResetTable();
+            }
             GUI.Label(new Rect(630, 887, 660, 28), controls.Placement.Status, keyLabel);
             GUI.matrix = old;
         }

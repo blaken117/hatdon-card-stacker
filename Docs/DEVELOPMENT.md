@@ -1,5 +1,9 @@
 # Development record
 
+## Prototype 017 — Challenge collection
+
+The main menu lists ten layouts and the separate Practice table. Guides have no colliders. A challenge is marked complete once distinct released cards match all targets for three seconds. Tables autosave card poses, staged holds, deck and completion to separate files. Shift+Esc opens the recording tools with an isolated Bridge preview.
+
 ## Prototype 016 — Commit each card, then release the pair
 
 Each card stays adjustable after a drag. Commit card holds it at its current pose. The toolbar offers Commit pair once both are held, and the existing overlap check runs before physics release. The Esc catalogue includes a pending shot from a fresh table.

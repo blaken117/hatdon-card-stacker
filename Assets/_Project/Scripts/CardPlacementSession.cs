@@ -16,6 +16,9 @@ namespace Hatdon.CardStacker
         private Vector3[] startingPositions;
         private Quaternion[] startingRotations;
         private PhysicsMaterial paper,felt;
+        private readonly System.Collections.Generic.Dictionary<Rigidbody,int> cardNumbers = new System.Collections.Generic.Dictionary<Rigidbody,int>();
+
+        public int CardNumber(Rigidbody card) => cardNumbers[card];
 
         public void Initialise(CardStackerControls owner)
         {
@@ -82,6 +85,7 @@ namespace Hatdon.CardStacker
             controls.Hands[i]=card;ConfigureCard(card);card.gameObject.SetActive(true);
             card.position=position;card.rotation=rotation;card.name="Drawn card "+(number+1);
             CardTableArt.StyleDrawnCard(card,number);
+            cardNumbers[card]=number;
             drawn[i]=true;locked[i]=false;IsCommitted=false;Physics.SyncTransforms();
             controls.SelectCard(card);
             return card;
@@ -101,7 +105,22 @@ namespace Hatdon.CardStacker
             if(oldOutline!=null){oldOutline.gameObject.SetActive(false);Destroy(oldOutline.gameObject);}
             controls.RegisterCard(card);ConfigureCard(card);card.gameObject.SetActive(true);
             card.position=position;card.rotation=rotation;card.name="Pickup card "+(number+1);
-            CardTableArt.StyleDrawnCard(card,number);return card;
+            CardTableArt.StyleDrawnCard(card,number);
+            cardNumbers[card]=number;
+            return card;
+        }
+
+        public Rigidbody RestoreCard(int slot, Vector3 position, Quaternion rotation, int number, bool held)
+        {
+            if (slot >= 0)
+            {
+                var staged = DrawCard(slot,position,rotation,number);
+                if (held) LockHand(slot,showGhostHand:false);
+                return staged;
+            }
+            var card = CreateDropCard(position,rotation,number);
+            ReleaseCard(card);
+            return card;
         }
         public bool LockHand(int i,bool showGhostHand=true)
         {
@@ -120,7 +139,15 @@ namespace Hatdon.CardStacker
         {
             if(IsCommitted)return false;
             if(!BothLocked){Status="Commit each card before releasing the pair.";return false;}
-            return ReleasePair();
+            return ReleasePair(controls.Hands);
+        }
+
+        public int HeldSingleSlot => IsLocked(0) && !HasCard(1) ? 0 : IsLocked(1) && !HasCard(0) ? 1 : -1;
+
+        public void ReleaseSingle()
+        {
+            int slot = HeldSingleSlot;
+            if (slot >= 0) ReleasePair(new[] { controls.Hands[slot] });
         }
 
         public void CommitSelectedCard()
@@ -132,10 +159,10 @@ namespace Hatdon.CardStacker
             if (HasCard(other) && !IsLocked(other)) controls.SelectCard(controls.Hands[other]);
         }
 
-        private bool ReleasePair()
+        private bool ReleasePair(Rigidbody[] cards)
         {
             Physics.SyncTransforms();
-            foreach(var card in controls.Hands)
+            foreach(var card in cards)
             {
                 var shape=card.GetComponent<Collider>();
                 foreach(var other in FindObjectsByType<Collider>(FindObjectsSortMode.None))
@@ -143,19 +170,27 @@ namespace Hatdon.CardStacker
                     {Status="Cards overlap. Select a card to adjust it, then commit it again.";return false;}
             }
             controls.Manipulator.EndDrag();
-            foreach(var card in controls.Hands)
-            {
-                card.isKinematic=false;card.collisionDetectionMode=CollisionDetectionMode.ContinuousDynamic;
-                card.linearVelocity=Vector3.zero;card.angularVelocity=Vector3.zero;card.WakeUp();
-            }
+            foreach(var card in cards) ReleaseCard(card);
             locked[0]=locked[1]=false;IsCommitted=true;controls.PairCommitted();
-            Status=controls.Deck.Remaining > 0 ? "Pair released. Draw the next card." : "Deck empty. Reset cards to start over.";
+            Status=controls.Deck.Remaining > 0
+                ? (cards.Length == 1 ? "Card released. Draw the next card." : "Pair released. Draw the next card.")
+                : "Deck empty. Reset cards to start over.";
             return true;
+        }
+
+        private static void ReleaseCard(Rigidbody card)
+        {
+            card.isKinematic=false;
+            card.collisionDetectionMode=CollisionDetectionMode.ContinuousDynamic;
+            card.linearVelocity=Vector3.zero;
+            card.angularVelocity=Vector3.zero;
+            card.WakeUp();
         }
 
         public void ResetCards()
         {
             controls.Manipulator.EndDrag();controls.RestoreOriginalCards(originals);
+            cardNumbers.Clear();
             for(int i=0;i<2;i++)
             {
                 ConfigureCard(originals[i]);originals[i].position=startingPositions[i];originals[i].rotation=startingRotations[i];
